@@ -1,0 +1,61 @@
+﻿<Window x:Class="BluesAimTrain.MainWindow"
+     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Aim Trainer" Height="600" Width="800"
+        Background="#111">
+
+    <Grid>
+        <!-- Game area -->
+        <Canvas Name="GameCanvas" Background="#111" />
+
+        <!-- Control / Settings panel -->
+        <StackPanel Name="ControlPanel"
+                Orientation="Vertical"
+                VerticalAlignment="Top"
+                HorizontalAlignment="Right"
+                Margin="10"
+                Background="#222">
+            <Button Name="StartPauseButton" Content="Start" Width="120" Height="40" Margin="5" FontSize="14"/>
+            <TextBlock Name="ScoreTextBlock" Text="Score: 0" Foreground="White" FontSize="16" Margin="5" HorizontalAlignment="Center"/>
+            <TextBlock Name="AccuracyTextBlock" Text="Accuracy: 0%" Foreground="White" FontSize="16" Margin="5" HorizontalAlignment="Center"/>
+        </StackPanel>
+
+        <!-- PAUSE OVERLAY -->
+        <Grid x:Name="PauseOverlay" Background="#AA000000" Visibility="Collapsed">
+            <Border Background="#333" Padding="20" Width="300" Height="400" HorizontalAlignment="Center" VerticalAlignment="Center">
+                <StackPanel>
+                    <TextBlock Text="Pause Menu" FontSize="24" Foreground="White" HorizontalAlignment="Center" Margin="0,0,0,20"/>
+
+                    <!-- Target Color -->
+                    <TextBlock Text="Target Color:" Foreground="White" Margin="0,5"/>
+                    <ComboBox x:Name="ColorPicker" SelectedIndex="0" Margin="0,0,0,10"/>
+
+                    <!-- Target Size -->
+                    <TextBlock Text="Target Size (px):" Foreground="White" Margin="0,5"/>
+                    <Slider Name="SizeSlider" Minimum="20" Maximum="100" Value="50" TickFrequency="5" IsSnapToTickEnabled="True" Margin="0,0,0,10"/>
+
+                    <!-- Spawn Delay -->
+                    <TextBlock Text="Spawn Delay (ms):" Foreground="White" Margin="0,5"/>
+                    <Slider Name="DelaySlider" Minimum="100" Maximum="2000" Value="800" TickFrequency="100" IsSnapToTickEnabled="True" Margin="0,0,0,10"/>
+
+                    <!-- Target Lifetime -->
+                    <TextBlock Text="Target Lifetime (ms):" Foreground="White" Margin="0,5"/>
+                    <Slider Name="LifetimeSlider" Minimum="200" Maximum="5000" Value="1000" TickFrequency="100" IsSnapToTickEnabled="True" Margin="0,0,0,10"/>
+
+                    <Button Name="ResumeButton" Content="Resume Game" Width="120" Height="40" HorizontalAlignment="Center" Margin="0,10,0,0"/>
+                </StackPanel>
+            </Border>
+        </Grid>
+
+        <!-- PREVIOUS STATUS PANEL -->
+        <Grid x:Name="PreviousStatsGrid" Background="#222" Width="200" Height="900" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="10" Visibility="Collapsed">
+            <StackPanel Margin="10">
+                <TextBlock Text="Previous Stats" FontSize="18" Foreground="White" HorizontalAlignment="Left" Margin="0,0,0,10"/>
+                <TextBlock x:Name="PrevScoreTextBlock" Text="Score: 0" Foreground="White" HorizontalAlignment="Left" FontSize="11" Margin="0,5"/>
+                <TextBlock x:Name="PrevAccuracyTextBlock" Text="Accuracy: 0%" Foreground="White" HorizontalAlignment="Left" FontSize="11" Margin="0,5"/>
+                <TextBlock x:Name="PrevTargetSettingsTextBlock" Text="Settings: Default" Foreground="White" HorizontalAlignment="Left" FontSize="11" Margin="0,5"/>
+            </StackPanel>
+        </Grid>
+
+    </Grid>
+</Window>
