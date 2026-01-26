@@ -3,10 +3,59 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         WindowStyle="None"
         ResizeMode="CanResize"
-        Height="600"
-        Width="800"
+        QueryCursor="Window_QueryCursor"
+        Height="1000"
+        Width="1000"
         Background="#101"
         FocusManager.FocusedElement="{Binding RelativeSource={RelativeSource Self}}">
+  
+    <Window.Resources>
+        <!-- Unified Button Style -->
+        <Style TargetType="Button" x:Key="FancyButton">
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="Background" Value="#333"/>
+            <Setter Property="BorderBrush" Value="#555"/>
+            <Setter Property="BorderThickness" Value="2"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="FontSize" Value="12"/>
+            <Setter Property="Padding" Value="6,3"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="HorizontalAlignment" Value="Center"/>
+            <Setter Property="VerticalAlignment" Value="Center"/>
+            <Setter Property="Effect">
+                <Setter.Value>
+                    <DropShadowEffect Color="Black" BlurRadius="5" ShadowDepth="1" Opacity="0.3"/>
+                </Setter.Value>
+            </Setter>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border Background="{TemplateBinding Background}" 
+                            BorderBrush="{TemplateBinding BorderBrush}" 
+                            BorderThickness="{TemplateBinding BorderThickness}" 
+                            CornerRadius="6">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter Property="Background" Value="#444"/>
+                                <Setter Property="BorderBrush" Value="#77BFFF"/>
+                            </Trigger>
+                            <Trigger Property="IsPressed" Value="True">
+                                <Setter Property="Background" Value="#555"/>
+                                <Setter Property="BorderBrush" Value="#66A1FF"/>
+                            </Trigger>
+                            <Trigger Property="IsEnabled" Value="False">
+                                <Setter Property="Background" Value="#222"/>
+                                <Setter Property="Foreground" Value="#888"/>
+                                <Setter Property="BorderBrush" Value="#444"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </Window.Resources>
 
     <Grid>
         <!-- GAME GRID -->
@@ -50,13 +99,92 @@
         <!-- MAIN CONTENT -->
         
         <Grid Grid.Row="1">
+
+            <Grid.Triggers>
+                <EventTrigger RoutedEvent="Loaded">
+                    <BeginStoryboard>
+                        <Storyboard RepeatBehavior="Forever">
+
+                            <!-- Opacity pulse -->
+                            <DoubleAnimation Storyboard.TargetName="StartupMessage" Storyboard.TargetProperty="Opacity" From="0.65" To="1.0" Duration="0:0:2.4" AutoReverse="True">
+                                <DoubleAnimation.EasingFunction>
+                                    <SineEase EasingMode="EaseInOut"/>
+                                </DoubleAnimation.EasingFunction>
+                            </DoubleAnimation>
+
+                            <!-- Scale pulse -->
+                            <DoubleAnimation Storyboard.TargetName="StartupScale" Storyboard.TargetProperty="ScaleX" From="1.0" To="1.06" Duration="0:0:2.4" AutoReverse="True">
+                                <DoubleAnimation.EasingFunction>
+                                    <SineEase EasingMode="EaseInOut"/>
+                                </DoubleAnimation.EasingFunction>
+                            </DoubleAnimation>
+                            <DoubleAnimation Storyboard.TargetName="StartupScale" Storyboard.TargetProperty="ScaleY" From="1.0" To="1.06" Duration="0:0:2.4" AutoReverse="True">
+                                <DoubleAnimation.EasingFunction>
+                                    <SineEase EasingMode="EaseInOut"/>
+                                </DoubleAnimation.EasingFunction>
+                            </DoubleAnimation>
+
+                            <!-- Optional float (smooth Y translation) -->
+                            <DoubleAnimation Storyboard.TargetName="StartupTranslate" Storyboard.TargetProperty="Y" From="0" To="-4" Duration="0:0:2.4" AutoReverse="True">
+                                <DoubleAnimation.EasingFunction>
+                                    <SineEase EasingMode="EaseInOut"/>
+                                </DoubleAnimation.EasingFunction>
+                            </DoubleAnimation>
+
+                        </Storyboard>
+                    </BeginStoryboard>
+                </EventTrigger>
+            </Grid.Triggers>
+
             <Canvas Name="GameCanvas" Background="#FF2E2E2E"/>
             <StackPanel Name="ControlPanel" Orientation="Vertical" VerticalAlignment="Top" HorizontalAlignment="Right" Margin="10" Background="#222"/>
-            <TextBlock x:Name="StartupMessage" Text="No pressure. Press ESC to play/pause" Foreground="White" FontSize="24" FontWeight="Bold" HorizontalAlignment="Center" VerticalAlignment="Center" Visibility="Visible" TextAlignment="Center"/>
+            <!-- STARTUP OVERLAY -->
+            <Border x:Name="StartupMessage" Background="#FF102A5C" BorderBrush="#FF4169E1" BorderThickness="3" CornerRadius="12" Padding="20"
+                    HorizontalAlignment="Center" VerticalAlignment="Center" Visibility="Visible" RenderTransformOrigin="0.5,0.5">
+
+                            <Border.RenderTransform>
+                                <TransformGroup>
+                                    <ScaleTransform x:Name="StartupScale" ScaleX="1" ScaleY="1"/>
+                                    <TranslateTransform x:Name="StartupTranslate" X="0" Y="0"/>
+                                </TransformGroup>
+                            </Border.RenderTransform>
+
+                            <Border.Effect>
+                                <DropShadowEffect Color="Black" BlurRadius="12" ShadowDepth="0" Opacity="0.6"/>
+                            </Border.Effect>
+
+                            <!-- Wrap content in a StackPanel so we can switch between normal and challenge complete -->
+                            <StackPanel x:Name="StartupMessageStack" HorizontalAlignment="Center" VerticalAlignment="Center">
+                                <TextBlock x:Name="StartupMessageText" FontSize="24" FontWeight="Bold" Foreground="White" TextAlignment="Center" >
+                                <TextBlock x:Name="ChallengeTimeTextBlock" FontSize="16" FontWeight="Bold" Foreground="White" Text="00:00:000" TextAlignment="Center" Visibility="Collapsed"/>
+                                    <Run Text="Press "/>
+                                        <InlineUIContainer BaselineAlignment="Center">
+                                            <Border Background="#222" BorderBrush="#FF63B8FF" BorderThickness="2" CornerRadius="4" Padding="6,2" Margin="4,0">
+                                                <TextBlock Text="SPACE" FontFamily="Consolas" FontSize="18" FontWeight="SemiBold" Foreground="White"/>
+                                            </Border>
+                                        </InlineUIContainer>
+                                    <Run Text=" to play"/>
+                                        <LineBreak/>
+                                    <Run Text="Press "/>
+                                        <InlineUIContainer BaselineAlignment="Center">
+                                            <Border Background="#222" BorderBrush="#FF63B8FF" BorderThickness="2" CornerRadius="4" Padding="6,2" Margin="4,0">
+                                                <TextBlock Text="ESC" FontFamily="Consolas" FontSize="18" FontWeight="SemiBold" Foreground="White"/>
+                                            </Border>
+                                        </InlineUIContainer>
+                                    <Run Text=" to pause"/>
+                                </TextBlock>
+
+                                <!-- Challenge Complete elements (hidden initially) -->
+                                <TextBlock x:Name="StartupMessageTitle" FontSize="28" FontWeight="Bold" Foreground="White" TextAlignment="Center" Margin="0,10,0,5" Visibility="Collapsed"/>
+                                <TextBlock x:Name="StartupMessageStats" FontSize="20" Foreground="White" TextAlignment="Center" Visibility="Collapsed"/>
+                                <TextBlock x:Name="StartupMessageHint" FontSize="16" Foreground="LightGray" TextAlignment="Center" Margin="0,10,0,0" Visibility="Collapsed"/>
+                            </StackPanel>
+            </Border>
 
             <!-- PAUSE OVERLAY -->
-            <Border x:Name="PauseOverlayBorder" Background="#FF102A5C" BorderBrush="#FF4169E1" BorderThickness="4" CornerRadius="12" Padding="20" HorizontalAlignment="Center" VerticalAlignment="Center" Visibility="Collapsed">
-                <Grid x:Name="PauseOverlay" Background="#FF102A5C" HorizontalAlignment="Center" VerticalAlignment="Center">
+            <Border x:Name="PauseOverlayBorder" Background="#FF102A5C" BorderBrush="#FF4169E1" BorderThickness="4" CornerRadius="12" Padding="12"  HorizontalAlignment="Center" VerticalAlignment="Center" Visibility="Collapsed">
+                <StackPanel x:Name="PauseOverlayStack" Orientation="Vertical" HorizontalAlignment="Center">
+                    <Grid x:Name="PauseMainGrid" Background="#FF102A5C" HorizontalAlignment="Center">
                     <Grid.RowDefinitions>
                         <RowDefinition Height="Auto"/>
                         <RowDefinition Height="*"/>
@@ -67,47 +195,103 @@
                         <ColumnDefinition Width="Auto"/>
                     </Grid.ColumnDefinitions>
 
-                    <!-- Title spanning all columns -->
-                    <TextBlock Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="3"
-                   Text="BluesAimTrain" FontFamily="Segoe UI Black" FontSize="18" FontWeight="Bold"
-                   Foreground="White" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0,10">
-                        <TextBlock.Effect>
-                            <DropShadowEffect Color="Black" BlurRadius="3" ShadowDepth="0" Opacity="1"/>
-                        </TextBlock.Effect>
-                    </TextBlock>
+                        <!-- Title + ESC Hint -->
+                        <StackPanel Grid.Row="0" Grid.Column="0"  Grid.ColumnSpan="3"  HorizontalAlignment="Center" VerticalAlignment="Top" Margin="0,4">
 
-                    <!-- LEFT: Presets Panel -->
+                            <!-- Title -->
+                            <TextBlock Text="BluesAimTrain"  FontFamily="Segoe UI Black" FontSize="18"  FontWeight="Bold" Foreground="White"  HorizontalAlignment="Center">
+
+                                <TextBlock.Effect>
+                                    <DropShadowEffect Color="Black" BlurRadius="3" ShadowDepth="0" Opacity="1"/>
+                                </TextBlock.Effect>
+                            </TextBlock>
+
+                            <!-- ESC Hint -->
+                            <TextBlock Text="Press ESC to close"  Foreground="#AAAAAA"  FontSize="10"  Opacity="0.5" HorizontalAlignment="Center"  Margin="0,2,0,0"/>
+                        </StackPanel>
+
+                        <!-- LEFT: Presets Panel -->
                     <Border Grid.Row="1" Grid.Column="0" Background="#222" Padding="20" Width="200" Height="400" Margin="0,0,20,0" BorderBrush="#FF4169E1" BorderThickness="3" CornerRadius="6">
                         <StackPanel VerticalAlignment="Top">
                             <TextBlock Text="Presets" FontSize="18" Foreground="White" HorizontalAlignment="Center" Margin="0,0,0,20"/>
-                            <Button Content="Default" Name="PresetDefault" Margin="0,5" Height="35"/>
-                            <Button Content="Beginner" Name="PresetBeginner" Margin="0,5" Height="35"/>
-                            <Button Content="Casual" Name="PresetCasual" Margin="0,5" Height="35"/>
-                            <Button Content="Pro" Name="PresetPro" Margin="0,5" Height="35"/>
+                                <Button Content="Default" Name="PresetDefault" Margin="0,5" Width="122" Height="28" Style="{StaticResource FancyButton}"/>
+                                <Button Content="Beginner" Name="PresetBeginner" Margin="0,5" Width="122" Height="28" Style="{StaticResource FancyButton}"/>
+                                <Button Content="Casual" Name="PresetCasual" Margin="0,5" Width="122" Height="28" Style="{StaticResource FancyButton}"/>
+                                <Button Content="Pro" Name="PresetPro" Margin="0,5" Width="122" Height="28" Style="{StaticResource FancyButton}"/>
+                            
+                            <!-- Challenge button in its own stack panel -->
+                            <StackPanel Margin="0,70,0,0" HorizontalAlignment="Center">
+                                    <Button Content="CHALLENGE" Name="PresetChallenge" Width="122" Height="80" FontWeight="Bold" Foreground="White" Background="#4682B4" BorderBrush="#87CEFA" BorderThickness="2" Cursor="Hand">
+                                    <Button.Effect>
+                                        <DropShadowEffect Color="Black" BlurRadius="4" ShadowDepth="1" Opacity="0.6"/>
+                                    </Button.Effect>
+                                    <Button.Style>
+                                        <Style TargetType="Button">
+                                                <Setter Property="Background" Value="#4682B4"/>
+                                            <Setter Property="Foreground" Value="White"/>
+                                                <Setter Property="BorderBrush" Value="#87CEFA"/>
+                                            <Setter Property="BorderThickness" Value="2"/>
+                                            <Setter Property="Cursor" Value="Hand"/>
+                                            <Style.Triggers>
+                                                <Trigger Property="IsMouseOver" Value="True">
+                                                        <Setter Property="Background" Value="#87CEFA"/>
+                                                </Trigger>
+                                                <Trigger Property="IsPressed" Value="True">
+                                                        <Setter Property="Background" Value="#4682B4"/>
+                                                </Trigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </Button.Style>
+                                </Button>
+                            </StackPanel>
                         </StackPanel>
                     </Border>
 
                     <!-- MIDDLE: Pause Menu -->
-                    <Border Grid.Row="1" Grid.Column="1" Background="#333" Padding="20" Width="300" Height="400" Margin="0,0,20,0" BorderBrush="#FF4169E1" BorderThickness="3" CornerRadius="6">
+                    <Border Grid.Row="1" Grid.Column="1" Background="#333" Padding="20" Width="300" Height="400" Margin="0,0,20,0"  BorderBrush="#FF4169E1" BorderThickness="3" CornerRadius="6">
                         <StackPanel VerticalAlignment="Top">
                             <TextBlock Text="Pause Menu" FontSize="18" Foreground="White" HorizontalAlignment="Center" Margin="0,0,0,20"/>
-                            <Button Name="RandomColorButton" Content="Rng Color" Width="60" Height="28" FontSize="11" HorizontalAlignment="Left" Margin="0,0,0,10" Click="RandomColorButton_Click"/>
-                            <TextBlock Text="Target Color:" Foreground="White" FontSize="11" Margin="0,5"/>
-                            <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Margin="0,0,0,10">
-                                <ComboBox x:Name="ColorPicker" SelectedIndex="0" FontSize="11" Width="120" Margin="0,0,10,0"/>
+                                <StackPanel Orientation="Horizontal" Margin="0,0,0,10" VerticalAlignment="Center">
+                                    <Button Name="RandomColorButton" Content="Rng Color" Width="210" Height="28" FontSize="11" Style="{StaticResource FancyButton}" Click="RandomColorButton_Click"/>
+
+                                    <!-- Current Color Preview -->
+                                    <Border Name="CurrentColorPreview" Width="28" Height="28" Margin="8,0,0,0" BorderBrush="#FF4169E1" BorderThickness="2" CornerRadius="4" Background="White"/>
+                                </StackPanel>
+
+                                <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Margin="0,0,0,10">
+                                    <Button Name="ToggleColorPickerButton" Content="Color Select" Width="210" Height="28" Click="ToggleColorPickerButton_Click" Style="{StaticResource FancyButton}"/>
+                                    <!-- Current Color Preview -->
+                                    <Border Name="CurrentColorPreview2" Width="28" Height="28" Margin="8,0,0,0" BorderBrush="#FF4169E1" BorderThickness="2" CornerRadius="4" Background="White"/>
+                                </StackPanel>
+
+                                <!-- Manual Inputs -->
+                                <StackPanel Margin="0,6,0,0">
+
+                                    <StackPanel Orientation="Horizontal" Margin="0,6,0,0">
+                                        <TextBlock Text="Target Size (px)" Foreground="White" FontSize="11" Width="140"/>
+                                        <TextBox x:Name="SizeTextBox" Width="90" Height="24" Text="50" FontSize="11" Padding="6,2" Foreground="White" Background="#222" BorderBrush="#FF4169E1" BorderThickness="1" VerticalContentAlignment="Center" PreviewTextInput="NumericOnly_PreviewTextInput"/>
+                                    </StackPanel>
+
+                                    <StackPanel Orientation="Horizontal" Margin="0,8,0,0">
+                                        <TextBlock Text="Spawn Delay (ms)" Foreground="White" FontSize="11" Width="140"/>
+                                        <TextBox x:Name="DelayTextBox" Width="90" Height="24" Text="800" FontSize="11" Padding="6,2" Foreground="White" Background="#222" BorderBrush="#FF4169E1" BorderThickness="1" VerticalContentAlignment="Center" PreviewTextInput="NumericOnly_PreviewTextInput"/>
+                                    </StackPanel>
+
+                                    <StackPanel Orientation="Horizontal" Margin="0,8,0,0">
+                                        <TextBlock Text="Target Lifetime (ms)" Foreground="White" FontSize="11" Width="140"/>
+                                        <TextBox x:Name="LifetimeTextBox" Width="90" Height="24" Text="1000" FontSize="11" Padding="6,2" Foreground="White" Background="#222" BorderBrush="#FF4169E1" BorderThickness="1" VerticalContentAlignment="Center" PreviewTextInput="NumericOnly_PreviewTextInput"/>
+                                    </StackPanel>
+
+                                    <Button x:Name="ApplySettingsButton" Content="Set" Width="240" Height="28" FontSize="11" Style="{StaticResource FancyButton}" Margin="0,10,0,0" Click="ApplySettingsButton_Click"/>
+
+                                </StackPanel>
+
                                 <CheckBox x:Name="CenterToggleButton" Content="Target Center" IsChecked="True" FontSize="11" Foreground="White" VerticalAlignment="Center"/>
                             </StackPanel>
-                            <TextBlock Text="Target Size (px):" Foreground="White" FontSize="11" Margin="0,5"/>
-                            <Slider Name="SizeSlider" Minimum="20" Maximum="100" Value="50" TickFrequency="5" FontSize="11" IsSnapToTickEnabled="True" Margin="0,0,0,10"/>
-                            <TextBlock Text="Spawn Delay (ms):" Foreground="White" FontSize="11" Margin="0,5"/>
-                            <Slider Name="DelaySlider" Minimum="100" Maximum="2000" Value="800" TickFrequency="100" IsSnapToTickEnabled="True" FontSize="11" Margin="0,0,0,10"/>
-                            <TextBlock Text="Target Lifetime (ms):" Foreground="White" FontSize="11" Margin="0,5"/>
-                            <Slider Name="LifetimeSlider" Minimum="200" Maximum="5000" Value="1000" TickFrequency="100" IsSnapToTickEnabled="True" FontSize="11" Margin="0,0,0,10"/>
-                            <Button Name="ResumeButton" Content="Resume Game" Width="120" Height="40" HorizontalAlignment="Center" FontSize="11" Margin="0,10,0,0"/>
-                        </StackPanel>
                     </Border>
 
-                    <!-- RIGHT: Previous Stats Panel -->
+
+                        <!-- RIGHT: Previous Stats Panel -->
                     <Border x:Name="PreviousStatsGrid" Grid.Row="1" Grid.Column="2" Width="200" Height="400" Background="#222" Padding="20" BorderBrush="#FF4169E1" BorderThickness="3" CornerRadius="6">
                         <StackPanel VerticalAlignment="Top">
                             <!-- Header + Reset Button -->
@@ -133,7 +317,29 @@
                             </Border>
                         </StackPanel>
                     </Border>
+
                 </Grid>
+                    <Border x:Name="ColorPickerPanel"
+                        Background="#222"
+                        BorderBrush="#FF4169E1"
+                        BorderThickness="3"
+                        CornerRadius="6"
+                        Padding="10"
+                        Margin="0,10,0,0"
+                        Visibility="Collapsed"
+                        HorizontalAlignment="Stretch">
+                        
+                        <ScrollViewer VerticalScrollBarVisibility="Auto"
+                            HorizontalScrollBarVisibility="Disabled">
+                            <UniformGrid x:Name="ColorBoxesPanel"
+                                Columns="40"
+                                Width="Auto"
+                                UseLayoutRounding="True"
+                                SnapsToDevicePixels="True"
+                                HorizontalAlignment="Stretch"/>
+                        </ScrollViewer>
+                    </Border>
+                </StackPanel>
             </Border>
         </Grid>
     </Grid>
