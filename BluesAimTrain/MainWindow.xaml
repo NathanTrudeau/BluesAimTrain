@@ -8,8 +8,9 @@
         Width="1000"
         Background="#101"
         FocusManager.FocusedElement="{Binding RelativeSource={RelativeSource Self}}">
-  
+
     <Window.Resources>
+
         <!-- Unified Button Style -->
         <Style TargetType="Button" x:Key="FancyButton">
             <Setter Property="Foreground" Value="White"/>
@@ -30,10 +31,11 @@
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="Button">
-                        <Border Background="{TemplateBinding Background}" 
-                            BorderBrush="{TemplateBinding BorderBrush}" 
-                            BorderThickness="{TemplateBinding BorderThickness}" 
-                            CornerRadius="6">
+                        <Border Background="{TemplateBinding Background}"
+                        BorderBrush="{TemplateBinding BorderBrush}"
+                        BorderThickness="{TemplateBinding BorderThickness}"
+                        Padding="{TemplateBinding Padding}"
+                        CornerRadius="8">
                             <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
                         </Border>
                         <ControlTemplate.Triggers>
@@ -55,292 +57,1420 @@
                 </Setter.Value>
             </Setter>
         </Style>
+
+        <Style x:Key="ChallengeToggleButton"
+       TargetType="Button"
+       BasedOn="{StaticResource FancyButton}">
+
+            <!-- Compact size -->
+            <Setter Property="Width" Value="56"/>
+            <Setter Property="Height" Value="26"/>
+            <Setter Property="Margin" Value="3"/>
+
+            <!-- Text -->
+            <Setter Property="FontSize" Value="12"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+
+            <!-- Internal spacing -->
+            <Setter Property="Padding" Value="4,1"/>
+
+            <!-- Colors -->
+            <Setter Property="Background" Value="#2A2A2A"/>
+            <Setter Property="BorderBrush" Value="#555"/>
+            <Setter Property="Foreground" Value="White"/>
+        </Style>
+
+
+        <Style x:Key="MenuOverlayButton" TargetType="Button">
+            <Setter Property="FontSize" Value="20"/>
+            <Setter Property="FontWeight" Value="Bold"/>
+            <Setter Property="Foreground" Value="#EAF6FF"/>
+            <Setter Property="Background" Value="#FF63B8FF"/>
+            <Setter Property="BorderBrush" Value="#AA63B8FF"/>
+            <Setter Property="BorderThickness" Value="2"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Padding" Value="10,6"/>
+
+            <!-- IMPORTANT: prevent any default theme behavior -->
+            <Setter Property="OverridesDefaultStyle" Value="True"/>
+            <Setter Property="SnapsToDevicePixels" Value="True"/>
+
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Grid SnapsToDevicePixels="True">
+
+                            <!-- Glow ring (visual only) -->
+                            <Border x:Name="Glow"
+                            CornerRadius="12"
+                            BorderBrush="{TemplateBinding BorderBrush}"
+                            BorderThickness="{TemplateBinding BorderThickness}"
+                            Background="#0F2A44"
+                            Opacity="0.55">
+                                <Border.Effect>
+                                    <DropShadowEffect Color="#EAF6FF"
+                                              BlurRadius="18"
+                                              ShadowDepth="0"
+                                              Opacity="0.35"/>
+                                </Border.Effect>
+                            </Border>
+
+                            <!-- Body -->
+                            <Border x:Name="Body"
+                                CornerRadius="12"
+                                Background="{TemplateBinding Background}"
+                                BorderBrush="{TemplateBinding BorderBrush}"
+                                BorderThickness="{TemplateBinding BorderThickness}">
+
+                                <Grid>
+
+                                    <!-- Subtle top sheen -->
+                                    <Rectangle Height="18"
+                                       VerticalAlignment="Top"
+                                       Opacity="0.12"
+                                       Fill="White"/>
+
+                                    <!-- OUTLINED TEXT -->
+                                    <Grid HorizontalAlignment="Center"
+                                          VerticalAlignment="Center">
+
+                                        <!-- Left -->
+                                        <TextBlock Text="{TemplateBinding Content}"
+                                           Foreground="Black"
+                                           FontSize="{TemplateBinding FontSize}"
+                                           FontWeight="{TemplateBinding FontWeight}"
+                                           Margin="-1,0,0,0"/>
+
+                                        <!-- Right -->
+                                        <TextBlock Text="{TemplateBinding Content}"
+                                           Foreground="Black"
+                                           FontSize="{TemplateBinding FontSize}"
+                                           FontWeight="{TemplateBinding FontWeight}"
+                                           Margin="1,0,0,0"/>
+
+                                        <!-- Up -->
+                                        <TextBlock Text="{TemplateBinding Content}"
+                                           Foreground="Black"
+                                           FontSize="{TemplateBinding FontSize}"
+                                           FontWeight="{TemplateBinding FontWeight}"
+                                           Margin="0,-1,0,0"/>
+
+                                        <!-- Down -->
+                                        <TextBlock Text="{TemplateBinding Content}"
+                                           Foreground="Black"
+                                           FontSize="{TemplateBinding FontSize}"
+                                           FontWeight="{TemplateBinding FontWeight}"
+                                           Margin="0,1,0,0"/>
+
+                                        <!-- Fill -->
+                                        <TextBlock Text="{TemplateBinding Content}"
+                                           Foreground="{TemplateBinding Foreground}"
+                                           FontSize="{TemplateBinding FontSize}"
+                                           FontWeight="{TemplateBinding FontWeight}"/>
+
+                                    </Grid>
+
+                                </Grid>
+                            </Border>
+
+                        </Grid>
+
+                        <ControlTemplate.Triggers>
+                            <!-- Hover: change colors only -->
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="Body" Property="Background" Value="#220B3A7A"/>
+                                <Setter Property="BorderBrush" Value="#FFBFE8FF"/>
+                                <Setter TargetName="Glow" Property="Opacity" Value="1"/>
+                            </Trigger>
+
+                            <!-- Pressed -->
+                            <Trigger Property="IsPressed" Value="True">
+                                <Setter TargetName="Body" Property="Background" Value="#33107AC6"/>
+                                <Setter TargetName="Glow" Property="Opacity" Value="0.9"/>
+                            </Trigger>
+
+                            <!-- Disabled -->
+                            <Trigger Property="IsEnabled" Value="False">
+                                <Setter Property="Opacity" Value="0.35"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
     </Window.Resources>
 
     <Grid>
-        <!-- GAME GRID -->
+        <!-- ROOT GRID ROWS -->
         <Grid.RowDefinitions>
             <RowDefinition Height="32"/>
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
 
-        <!-- CUSTOM TITLE BAR -->
-        <DockPanel Grid.Row="0" Background="#1C1C1C" MouseDown="TitleBar_MouseDown">
-            <TextBlock Text="BluesAimTrain" FontFamily="Segoe UI Black" FontSize="24" FontWeight="Bold" Foreground="RoyalBlue" VerticalAlignment="Center" Margin="10,0">
-                <TextBlock.Effect>
-                    <DropShadowEffect Color="Black" BlurRadius="3" ShadowDepth="0" Opacity="0.8"/>
-                </TextBlock.Effect>
-            </TextBlock>
-            <Button Width="32" Height="24" DockPanel.Dock="Right" Content="✕" ToolTip="Close" Foreground="RoyalBlue" Background="White" Click="CloseButton_Click"/>
-            <Button Width="32" Height="24" DockPanel.Dock="Right" Content="⬜" ToolTip="Maximize / Restore" Foreground="RoyalBlue" Background="White" Click="MaxRestoreButton_Click"/>
-            <Button Width="32" Height="24" DockPanel.Dock="Right" Content="—" ToolTip="Minimize" Foreground="RoyalBlue" Background="White" Click="MinimizeButton_Click"/>
-            <Button Name="ResetButton" Width="32" Height="24" DockPanel.Dock="Right" Content="⟳" ToolTip="Reset Stats" Background="White" Foreground="DarkRed" Click="ResetButton_Click"/>
-            <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Margin="10,0" DockPanel.Dock="Right">
-                <TextBlock Name="ScoreTextBlock" Text="Score: 0" Foreground="White" FontSize="14" Margin="0,0,10,0"/>
-                <TextBlock Name="AccuracyTextBlock" Text="Accuracy: 0%" Foreground="White" FontSize="14" Margin="10,0"/>
-            </StackPanel>
-            <DockPanel.Resources>
-                <Style TargetType="Button">
-                    <Setter Property="Cursor" Value="Hand"/>
-                    <Setter Property="Background" Value="Transparent"/>
-                    <Setter Property="BorderBrush" Value="#444"/>
-                    <Style.Triggers>
-                        <Trigger Property="IsMouseOver" Value="True">
-                            <Setter Property="Background" Value="#333"/>
-                        </Trigger>
-                        <Trigger Property="IsPressed" Value="True">
-                            <Setter Property="Background" Value="#555"/>
-                        </Trigger>
-                    </Style.Triggers>
-                </Style>
-            </DockPanel.Resources>
-        </DockPanel>
+        <!-- ========================= -->
+        <!-- CUSTOM TITLE BAR (ROW 0) -->
+        <!-- ========================= -->
+        <Grid x:Name="TitleBar" Grid.Row="0" Background="#1C1C1C" MouseDown="TitleBar_MouseDown">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="Auto"/>
+            </Grid.ColumnDefinitions>
 
-        <!-- MAIN CONTENT -->
-        
+            <!-- Left: MENU button (replaces title text) -->
+            <Button Grid.Column="0"
+                Name="MenuButtonLeft"
+                Content="MAIN MENU"
+                Width="90"
+                    
+                Height="24"
+                Margin="10,0"
+                HorizontalAlignment="Left"
+                VerticalAlignment="Center"
+                ToolTip="Return to Main Menu"
+                Foreground="White"
+                Background="#0A2342"
+                BorderBrush="#63B8FF"
+                BorderThickness="1"
+                Click="MenuButton_Click">
+                <Button.Effect>
+                    <DropShadowEffect Color="#63B8FF"
+                          BlurRadius="6"
+                          ShadowDepth="0"
+                          Opacity="0.5"/>
+                </Button.Effect>
+            </Button>
+
+            <!-- Right: HUD + Window Buttons -->
+            <DockPanel Grid.Column="2" LastChildFill="False" VerticalAlignment="Center" Margin="0,0,10,0">
+                <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Margin="10,0" DockPanel.Dock="Left">
+                    <TextBlock x:Name="CoinsTextBlock"
+                           FontSize="16"
+                           FontWeight="SemiBold"
+                           Foreground="Gold"
+                           Margin="8,4,0,0"
+                           Text="Coins: 0"/>
+                </StackPanel>
+
+                <Button Width="32" Height="24" DockPanel.Dock="Right" Content="✕"
+                        ToolTip="Close" Foreground="RoyalBlue" Background="White" Click="CloseButton_Click"/>
+                <Button Width="32" Height="24" DockPanel.Dock="Right" Content="⬜"
+                        ToolTip="Maximize / Restore" Foreground="RoyalBlue" Background="White" Click="MaxRestoreButton_Click"/>
+                <Button Width="32" Height="24" DockPanel.Dock="Right" Content="—"
+                        ToolTip="Minimize" Foreground="RoyalBlue" Background="White" Click="MinimizeButton_Click"/>
+
+                <DockPanel.Resources>
+                    <Style TargetType="Button">
+                        <Setter Property="Cursor" Value="Hand"/>
+                        <Setter Property="Background" Value="Transparent"/>
+                        <Setter Property="BorderBrush" Value="#444"/>
+                        <Style.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter Property="Background" Value="#333"/>
+                            </Trigger>
+                            <Trigger Property="IsPressed" Value="True">
+                                <Setter Property="Background" Value="#555"/>
+                            </Trigger>
+                        </Style.Triggers>
+                    </Style>
+                </DockPanel.Resources>
+            </DockPanel>
+        </Grid>
+
+        <!-- ========================= -->
+        <!-- MAIN CONTENT (ROW 1) -->
+        <!-- ========================= -->
         <Grid Grid.Row="1">
 
-            <Grid.Triggers>
-                <EventTrigger RoutedEvent="Loaded">
-                    <BeginStoryboard>
-                        <Storyboard RepeatBehavior="Forever">
+            <!-- ========================= -->
+            <!-- SCENE: MAIN MENU -->
+            <!-- ========================= -->
+            <Grid x:Name="Scene_MainMenu" Visibility="Visible" Background="#000" Panel.ZIndex="10">
+                <!-- Fixed-size menu art + buttons overlay -->
+                <Viewbox Stretch="None" HorizontalAlignment="Center" VerticalAlignment="Center">
+                    <Canvas Width="1000" Height="1000">
 
-                            <!-- Opacity pulse -->
-                            <DoubleAnimation Storyboard.TargetName="StartupMessage" Storyboard.TargetProperty="Opacity" From="0.65" To="1.0" Duration="0:0:2.4" AutoReverse="True">
-                                <DoubleAnimation.EasingFunction>
-                                    <SineEase EasingMode="EaseInOut"/>
-                                </DoubleAnimation.EasingFunction>
-                            </DoubleAnimation>
+                        <Image Source="pack://application:,,,/Assets/menu.png"
+                   Width="1000" Height="1000" />
 
-                            <!-- Scale pulse -->
-                            <DoubleAnimation Storyboard.TargetName="StartupScale" Storyboard.TargetProperty="ScaleX" From="1.0" To="1.06" Duration="0:0:2.4" AutoReverse="True">
-                                <DoubleAnimation.EasingFunction>
-                                    <SineEase EasingMode="EaseInOut"/>
-                                </DoubleAnimation.EasingFunction>
-                            </DoubleAnimation>
-                            <DoubleAnimation Storyboard.TargetName="StartupScale" Storyboard.TargetProperty="ScaleY" From="1.0" To="1.06" Duration="0:0:2.4" AutoReverse="True">
-                                <DoubleAnimation.EasingFunction>
-                                    <SineEase EasingMode="EaseInOut"/>
-                                </DoubleAnimation.EasingFunction>
-                            </DoubleAnimation>
+                        <!-- Buttons placed exactly over the spots on the art -->
+                        <Button x:Name="BtnFreerun"
+                    Content="FREERUN"
+                    Width="181" Height="38"
+                    Canvas.Left="169" Canvas.Top="462"
+                    Style="{StaticResource MenuOverlayButton}"
+                    Click="BtnFreerun_Click" HorizontalAlignment="Center" VerticalAlignment="Top" FontSize="16" FontWeight="Heavy"/>
 
-                            <!-- Optional float (smooth Y translation) -->
-                            <DoubleAnimation Storyboard.TargetName="StartupTranslate" Storyboard.TargetProperty="Y" From="0" To="-4" Duration="0:0:2.4" AutoReverse="True">
-                                <DoubleAnimation.EasingFunction>
-                                    <SineEase EasingMode="EaseInOut"/>
-                                </DoubleAnimation.EasingFunction>
-                            </DoubleAnimation>
+                        <Button x:Name="BtnChallenge"
+                    Content="$    CHALLENGE    $"
+                    Width="181" Height="39"
+                    Canvas.Left="169" Canvas.Top="384"
+                    Style="{StaticResource MenuOverlayButton}"
+                    Click="BtnChallenge_Click" HorizontalAlignment="Left" VerticalAlignment="Top" FontSize="18" FontWeight="Heavy"/>
 
-                        </Storyboard>
-                    </BeginStoryboard>
-                </EventTrigger>
-            </Grid.Triggers>
+                        <Button x:Name="BtnStats"
+                    Content="STATS"
+                    Width="181" Height="41"
+                    Canvas.Left="169" Canvas.Top="537"
+                    Style="{StaticResource MenuOverlayButton}"
+                    Click="BtnStats_Click" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="16" FontWeight="Heavy"/>
+                    </Canvas>
+                </Viewbox>
+            </Grid>
 
-            <Canvas Name="GameCanvas" Background="#FF2E2E2E"/>
-            <StackPanel Name="ControlPanel" Orientation="Vertical" VerticalAlignment="Top" HorizontalAlignment="Right" Margin="10" Background="#222"/>
-            <!-- STARTUP OVERLAY -->
-            <Border x:Name="StartupMessage" Background="#FF102A5C" BorderBrush="#FF4169E1" BorderThickness="3" CornerRadius="12" Padding="20"
-                    HorizontalAlignment="Center" VerticalAlignment="Center" Visibility="Visible" RenderTransformOrigin="0.5,0.5">
+            <!-- ========================= -->
+            <!-- SCENE: STATS -->
+            <!-- ========================= -->
+            <Grid x:Name="Scene_Stats" Visibility="Collapsed" Background="#111">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
 
-                            <Border.RenderTransform>
-                                <TransformGroup>
-                                    <ScaleTransform x:Name="StartupScale" ScaleX="1" ScaleY="1"/>
-                                    <TranslateTransform x:Name="StartupTranslate" X="0" Y="0"/>
-                                </TransformGroup>
-                            </Border.RenderTransform>
+                <StackPanel Grid.Row="0" Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,0,0,14">
+                    <TextBlock Text="Challenge History"
+                   Foreground="White"
+                   FontSize="26"
+                   FontWeight="Bold"
+                   Margin="0,0,14,0"/>
+                    <TextBlock Text="(last 10)"
+                   Foreground="#AAAAAA"
+                   FontSize="12"
+                   VerticalAlignment="Bottom"
+                   Opacity="0.8"/>
+                </StackPanel>
 
-                            <Border.Effect>
-                                <DropShadowEffect Color="Black" BlurRadius="12" ShadowDepth="0" Opacity="0.6"/>
-                            </Border.Effect>
+                <ListView x:Name="ChallengeHistoryList"
+                      Grid.Row="1"
+                      Background="#181818"
+                      BorderBrush="#333"
+                      BorderThickness="1"
+                      Foreground="White"
+                      ScrollViewer.VerticalScrollBarVisibility="Auto"
+                      Padding="10"
+                      HorizontalContentAlignment="Stretch">
+                    <ListView.Resources>
+                        <Style TargetType="ListViewItem">
+                            <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+                            <Setter Property="Padding" Value="0"/>
+                            <Setter Property="Margin" Value="0,0,0,10"/>
+                            <Setter Property="Background" Value="Transparent"/>
+                            <Setter Property="BorderThickness" Value="0"/>
+                            <Setter Property="FocusVisualStyle" Value="{x:Null}"/>
+                            <Style.Triggers>
+                                <Trigger Property="IsSelected" Value="True">
+                                    <Setter Property="Background" Value="#222"/>
+                                </Trigger>
+                                <Trigger Property="IsMouseOver" Value="True">
+                                    <Setter Property="Background" Value="#1F1F1F"/>
+                                </Trigger>
+                            </Style.Triggers>
+                        </Style>
+                    </ListView.Resources>
+                    <ListView.ItemTemplate>
+                        <DataTemplate>
+                            <Border CornerRadius="12"
+                Background="#141414"
+                BorderBrush="#2A2A2A"
+                BorderThickness="1"
+                Padding="14"
+                SnapsToDevicePixels="True">
 
-                            <!-- Wrap content in a StackPanel so we can switch between normal and challenge complete -->
-                            <StackPanel x:Name="StartupMessageStack" HorizontalAlignment="Center" VerticalAlignment="Center">
-                                <TextBlock x:Name="StartupMessageText" FontSize="24" FontWeight="Bold" Foreground="White" TextAlignment="Center" >
-                                <TextBlock x:Name="ChallengeTimeTextBlock" FontSize="16" FontWeight="Bold" Foreground="White" Text="00:00:000" TextAlignment="Center" Visibility="Collapsed"/>
-                                    <Run Text="Press "/>
-                                        <InlineUIContainer BaselineAlignment="Center">
-                                            <Border Background="#222" BorderBrush="#FF63B8FF" BorderThickness="2" CornerRadius="4" Padding="6,2" Margin="4,0">
-                                                <TextBlock Text="SPACE" FontFamily="Consolas" FontSize="18" FontWeight="SemiBold" Foreground="White"/>
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <!-- Left: meta -->
+                                        <ColumnDefinition Width="220"/>
+                                        <!-- Middle: big coins + key stats -->
+                                        <ColumnDefinition Width="*"/>
+                                        <!-- Right: heatmap + small facts -->
+                                        <ColumnDefinition Width="150"/>
+                                    </Grid.ColumnDefinitions>
+
+                                    <!-- ========================= -->
+                                    <!-- LEFT: Date + Mode -->
+                                    <!-- ========================= -->
+                                    <StackPanel Grid.Column="0" Margin="0,0,12,0">
+                                        <TextBlock Text="DATE / TIME"
+                                           Foreground="#7F7F7F"
+                                           FontSize="11"
+                                           FontWeight="SemiBold"
+                                           Margin="0,0,0,3"/>
+
+                                        <TextBlock Text="{Binding WhenText}"
+                                           Foreground="#D8D8D8"
+                                           FontSize="16"
+                                           FontWeight="SemiBold"
+                                           Margin="0,0,0,10"/>
+
+                                        <TextBlock Text="MODE"
+                                           Foreground="#7F7F7F"
+                                           FontSize="11"
+                                           FontWeight="SemiBold"
+                                           Margin="0,0,0,3"/>
+
+                                        <StackPanel Orientation="Horizontal">
+                                            <TextBlock Text="{Binding Mode}"
+                                               FontSize="16"
+                                               FontWeight="Bold"
+                                               Foreground="White"
+                                               Margin="0,0,10,0"/>
+
+                                            <Border Background="#202020"
+                                                BorderBrush="#303030"
+                                                BorderThickness="1"
+                                                CornerRadius="8"
+                                                Padding="8,2">
+                                                <TextBlock Text="{Binding Setting, StringFormat=Targets {0}}"
+                                                   Foreground="#CFCFCF"
+                                                   FontSize="12"
+                                                   FontWeight="SemiBold"/>
                                             </Border>
-                                        </InlineUIContainer>
-                                    <Run Text=" to play"/>
-                                        <LineBreak/>
-                                    <Run Text="Press "/>
-                                        <InlineUIContainer BaselineAlignment="Center">
-                                            <Border Background="#222" BorderBrush="#FF63B8FF" BorderThickness="2" CornerRadius="4" Padding="6,2" Margin="4,0">
-                                                <TextBlock Text="ESC" FontFamily="Consolas" FontSize="18" FontWeight="SemiBold" Foreground="White"/>
+                                        </StackPanel>
+                                    </StackPanel>
+
+                                    <!-- ========================= -->
+                                    <!-- MIDDLE: Big Coins + Stats -->
+                                    <!-- ========================= -->
+                                    <Grid Grid.Column="1">
+                                        <Grid.RowDefinitions>
+                                            <RowDefinition Height="Auto"/>
+                                            <RowDefinition Height="Auto"/>
+                                        </Grid.RowDefinitions>
+
+                                        <!-- Coins headline -->
+                                        <StackPanel Grid.Row="0" Orientation="Horizontal" VerticalAlignment="Center">
+                                            <TextBlock Text="+"
+                                               Foreground="Gold"
+                                               FontSize="26"
+                                               FontWeight="ExtraBold"
+                                               Margin="0,0,2,0"/>
+                                            <TextBlock Text="{Binding Coins}"
+                                               Foreground="Gold"
+                                               FontSize="30"
+                                               FontWeight="ExtraBold"
+                                               Margin="0,0,8,0"/>
+                                            <TextBlock Text="COINS"
+                                               Foreground="#E0B84A"
+                                               FontSize="14"
+                                               FontWeight="Bold"
+                                               VerticalAlignment="Bottom"
+                                               Margin="0,0,0,4"/>
+                                        </StackPanel>
+
+                                        <!-- Stats strip -->
+                                        <UniformGrid Grid.Row="1"
+                                             Columns="4"
+                                             Margin="0,12,0,0">
+
+                                            <!-- ACC -->
+                                            <Border CornerRadius="10"
+                                                Background="#101010"
+                                                BorderBrush="#2A2A2A"
+                                                BorderThickness="1"
+                                                Padding="10"
+                                                Margin="0,0,10,0">
+                                                <StackPanel>
+                                                    <TextBlock Text="ACCURACY"
+                                                       Foreground="#8E8E8E"
+                                                       FontSize="11"
+                                                       FontWeight="SemiBold"/>
+                                                    <TextBlock Text="{Binding AccText}"
+                                                       FontSize="18"
+                                                       FontWeight="Bold">
+                                                        <TextBlock.Style>
+                                                            <Style TargetType="TextBlock">
+                                                                <Setter Property="Foreground" Value="#DCDCDC"/>
+                                                                <Style.Triggers>
+                                                                    <DataTrigger Binding="{Binding Acc80Plus}" Value="True">
+                                                                        <Setter Property="Foreground" Value="#6DFF93"/>
+                                                                    </DataTrigger>
+                                                                </Style.Triggers>
+                                                            </Style>
+                                                        </TextBlock.Style>
+                                                    </TextBlock>
+                                                </StackPanel>
                                             </Border>
-                                        </InlineUIContainer>
-                                    <Run Text=" to pause"/>
-                                </TextBlock>
 
-                                <!-- Challenge Complete elements (hidden initially) -->
-                                <TextBlock x:Name="StartupMessageTitle" FontSize="28" FontWeight="Bold" Foreground="White" TextAlignment="Center" Margin="0,10,0,5" Visibility="Collapsed"/>
-                                <TextBlock x:Name="StartupMessageStats" FontSize="20" Foreground="White" TextAlignment="Center" Visibility="Collapsed"/>
-                                <TextBlock x:Name="StartupMessageHint" FontSize="16" Foreground="LightGray" TextAlignment="Center" Margin="0,10,0,0" Visibility="Collapsed"/>
-                            </StackPanel>
-            </Border>
+                                            <!-- IN-TGT -->
+                                            <Border CornerRadius="10"
+                                                Background="#101010"
+                                                BorderBrush="#2A2A2A"
+                                                BorderThickness="1"
+                                                Padding="10"
+                                                Margin="0,0,10,0">
+                                                <StackPanel>
+                                                    <TextBlock Text="IN TARGET"
+                                                       Foreground="#8E8E8E"
+                                                       FontSize="11"
+                                                       FontWeight="SemiBold"/>
+                                                    <TextBlock Text="{Binding InTgtText}"
+                                                       FontSize="18"
+                                                       FontWeight="Bold">
+                                                        <TextBlock.Style>
+                                                          <Style TargetType="TextBlock">
+                                                            <Setter Property="Foreground" Value="#DCDCDC"/>
+                                                            <Style.Triggers>
+                                                              <DataTrigger Binding="{Binding Acc80Plus}" Value="True">
+                                                                <Setter Property="Foreground" Value="#6DFF93"/>
+                                                              </DataTrigger>
+                                                            </Style.Triggers>
+                                                          </Style>
+                                                        </TextBlock.Style>
+                                                    </TextBlock>
+                                                </StackPanel>
+                                            </Border>
 
-            <!-- PAUSE OVERLAY -->
-            <Border x:Name="PauseOverlayBorder" Background="#FF102A5C" BorderBrush="#FF4169E1" BorderThickness="4" CornerRadius="12" Padding="12"  HorizontalAlignment="Center" VerticalAlignment="Center" Visibility="Collapsed">
-                <StackPanel x:Name="PauseOverlayStack" Orientation="Vertical" HorizontalAlignment="Center">
-                    <Grid x:Name="PauseMainGrid" Background="#FF102A5C" HorizontalAlignment="Center">
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="Auto"/>
-                        <RowDefinition Height="*"/>
-                    </Grid.RowDefinitions>
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="Auto"/>
-                        <ColumnDefinition Width="Auto"/>
-                        <ColumnDefinition Width="Auto"/>
-                    </Grid.ColumnDefinitions>
+                                            <!-- PACE -->
+                                            <Border CornerRadius="10"
+                                                Background="#101010"
+                                                BorderBrush="#2A2A2A"
+                                                BorderThickness="1"
+                                                Padding="10"
+                                                Margin="0,0,10,0">
+                                                <StackPanel>
+                                                    <TextBlock Text="PACE"
+                                                       Foreground="#8E8E8E"
+                                                       FontSize="11"
+                                                       FontWeight="SemiBold"/>
+                                                    <TextBlock Text="{Binding PaceText}"
+                                                       FontSize="18"
+                                                       FontWeight="Bold"
+                                                       Foreground="#DCDCDC"/>
+                                                </StackPanel>
+                                            </Border>
 
-                        <!-- Title + ESC Hint -->
-                        <StackPanel Grid.Row="0" Grid.Column="0"  Grid.ColumnSpan="3"  HorizontalAlignment="Center" VerticalAlignment="Top" Margin="0,4">
+                                            <!-- MISSES -->
+                                            <Border CornerRadius="10"
+                                            Background="#101010"
+                                            BorderBrush="#2A2A2A"
+                                            BorderThickness="1"
+                                            Padding="10">
+                                                <StackPanel>
+                                                    <TextBlock Text="MISSES"
+                                                       Foreground="#8E8E8E"
+                                                       FontSize="11"
+                                                       FontWeight="SemiBold"/>
+                                                    <TextBlock Text="{Binding Misses}"
+                                                       FontSize="18"
+                                                       FontWeight="Bold"
+                                                       Foreground="#DCDCDC"/>
+                                                </StackPanel>
+                                            </Border>
 
-                            <!-- Title -->
-                            <TextBlock Text="BluesAimTrain"  FontFamily="Segoe UI Black" FontSize="18"  FontWeight="Bold" Foreground="White"  HorizontalAlignment="Center">
+                                        </UniformGrid>
+                                    </Grid>
 
+                                    <!-- ========================= -->
+                                    <!-- RIGHT: Heatmap + small facts -->
+                                    <!-- ========================= -->
+                                    <StackPanel Grid.Column="2" HorizontalAlignment="Right">
+
+                                        <Border CornerRadius="12"
+                                        Background="#0F0F0F"
+                                        BorderBrush="#2A2A2A"
+                                        BorderThickness="1"
+                                        Padding="10"
+                                        Margin="0,0,0,10">
+
+                                            <StackPanel HorizontalAlignment="Center">
+                                                <TextBlock Text="HIT MAP"
+                                                   Foreground="#8E8E8E"
+                                                   FontSize="11"
+                                                   FontWeight="SemiBold"
+                                                   HorizontalAlignment="Center"
+                                                   Margin="0,0,0,8"/>
+
+                                                <Ellipse Width="84" Height="84">
+                                                    <Ellipse.Fill>
+                                                        <ImageBrush ImageSource="{Binding HeatmapImage}" Stretch="Fill"/>
+                                                    </Ellipse.Fill>
+                                                    <Ellipse.Stroke>
+                                                        <SolidColorBrush Color="#3A3A3A"/>
+                                                    </Ellipse.Stroke>
+                                                    <Ellipse.StrokeThickness>1</Ellipse.StrokeThickness>
+                                                </Ellipse>
+                                            </StackPanel>
+                                        </Border>
+
+                                        <TextBlock Text="{Binding Targets, StringFormat=Targets: {0}}"
+                               Foreground="#A0A0A0"
+                               FontSize="12"
+                               HorizontalAlignment="Right"/>
+                                    </StackPanel>
+
+                                </Grid>
+                            </Border>
+                        </DataTemplate>
+                    </ListView.ItemTemplate>
+                </ListView>
+            </Grid>
+
+
+            <!-- ============================================ -->
+            <!-- GAME HOST (HIDDEN) -->
+            <!-- ============================================ -->
+            <Grid x:Name="Scene_GameHost" Visibility="Collapsed" Panel.ZIndex="0" Background="Transparent" PreviewMouseDown="Scene_GameHost_PreviewMouseDown">
+                <!-- Pulsing Startup overlay animation -->
+                <Grid.Triggers>
+                    <EventTrigger RoutedEvent="Loaded">
+                        <BeginStoryboard>
+                            <Storyboard RepeatBehavior="Forever">
+
+                                <DoubleAnimation Storyboard.TargetName="StartupMessage"
+                                                     Storyboard.TargetProperty="Opacity"
+                                                     From="0.65" To="1.0"
+                                                     Duration="0:0:2.4"
+                                                     AutoReverse="True">
+                                    <DoubleAnimation.EasingFunction>
+                                        <SineEase EasingMode="EaseInOut"/>
+                                    </DoubleAnimation.EasingFunction>
+                                </DoubleAnimation>
+
+                                <DoubleAnimation Storyboard.TargetName="StartupScale"
+                                                     Storyboard.TargetProperty="ScaleX"
+                                                     From="1.0" To="1.06"
+                                                     Duration="0:0:2.4"
+                                                     AutoReverse="True">
+                                    <DoubleAnimation.EasingFunction>
+                                        <SineEase EasingMode="EaseInOut"/>
+                                    </DoubleAnimation.EasingFunction>
+                                </DoubleAnimation>
+
+                                <DoubleAnimation Storyboard.TargetName="StartupScale"
+                                                     Storyboard.TargetProperty="ScaleY"
+                                                     From="1.0" To="1.06"
+                                                     Duration="0:0:2.4"
+                                                     AutoReverse="True">
+                                    <DoubleAnimation.EasingFunction>
+                                        <SineEase EasingMode="EaseInOut"/>
+                                    </DoubleAnimation.EasingFunction>
+                                </DoubleAnimation>
+
+                                <DoubleAnimation Storyboard.TargetName="StartupTranslate"
+                                                     Storyboard.TargetProperty="Y"
+                                                     From="0" To="-4"
+                                                     Duration="0:0:2.4"
+                                                     AutoReverse="True">
+                                    <DoubleAnimation.EasingFunction>
+                                        <SineEase EasingMode="EaseInOut"/>
+                                    </DoubleAnimation.EasingFunction>
+                                </DoubleAnimation>
+
+                            </Storyboard>
+                        </BeginStoryboard>
+                    </EventTrigger>
+                </Grid.Triggers>
+
+                <!-- CHALLENGE PAUSE OVERLAY (NEW placeholder) -->
+                <Border x:Name="ChallengePauseOverlayBorder"
+                    Background="#FF102A5C"
+                    BorderBrush="#FF4169E1"
+                    BorderThickness="4"
+                    CornerRadius="12"
+                    Panel.ZIndex="999"
+                    Padding="12"
+                    HorizontalAlignment="Center"
+                    VerticalAlignment="Center"
+                    Visibility="Collapsed">
+
+                    <Grid x:Name="ChallengePauseMainGrid" Background="#FF102A5C" HorizontalAlignment="Center">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="*"/>
+                        </Grid.RowDefinitions>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+
+                        <!-- Title -->
+                        <StackPanel Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" HorizontalAlignment="Center" Margin="0,4,0,10">
+                            <TextBlock Text="Challenge Mode"
+                                   FontFamily="Segoe UI Black"
+                                   FontSize="18"
+                                   FontWeight="Bold"
+                                   Foreground="White"
+                                   HorizontalAlignment="Center">
                                 <TextBlock.Effect>
                                     <DropShadowEffect Color="Black" BlurRadius="3" ShadowDepth="0" Opacity="1"/>
                                 </TextBlock.Effect>
                             </TextBlock>
-
-                            <!-- ESC Hint -->
-                            <TextBlock Text="Press ESC to close"  Foreground="#AAAAAA"  FontSize="10"  Opacity="0.5" HorizontalAlignment="Center"  Margin="0,2,0,0"/>
+                            <TextBlock Text=" · ESC toggles menu · "
+                                   Foreground="#AAAAAA"
+                                   FontSize="10"
+                                   Opacity="0.65"
+                                   HorizontalAlignment="Center"
+                                   Margin="0,2,0,0"/>
                         </StackPanel>
 
-                        <!-- LEFT: Presets Panel -->
-                    <Border Grid.Row="1" Grid.Column="0" Background="#222" Padding="20" Width="200" Height="400" Margin="0,0,20,0" BorderBrush="#FF4169E1" BorderThickness="3" CornerRadius="6">
-                        <StackPanel VerticalAlignment="Top">
-                            <TextBlock Text="Presets" FontSize="18" Foreground="White" HorizontalAlignment="Center" Margin="0,0,0,20"/>
-                                <Button Content="Default" Name="PresetDefault" Margin="0,5" Width="122" Height="28" Style="{StaticResource FancyButton}"/>
-                                <Button Content="Beginner" Name="PresetBeginner" Margin="0,5" Width="122" Height="28" Style="{StaticResource FancyButton}"/>
-                                <Button Content="Casual" Name="PresetCasual" Margin="0,5" Width="122" Height="28" Style="{StaticResource FancyButton}"/>
-                                <Button Content="Pro" Name="PresetPro" Margin="0,5" Width="122" Height="28" Style="{StaticResource FancyButton}"/>
-                            
-                            <!-- Challenge button in its own stack panel -->
-                            <StackPanel Margin="0,70,0,0" HorizontalAlignment="Center">
-                                    <Button Content="CHALLENGE" Name="PresetChallenge" Width="122" Height="80" FontWeight="Bold" Foreground="White" Background="#4682B4" BorderBrush="#87CEFA" BorderThickness="2" Cursor="Hand">
-                                    <Button.Effect>
-                                        <DropShadowEffect Color="Black" BlurRadius="4" ShadowDepth="1" Opacity="0.6"/>
-                                    </Button.Effect>
-                                    <Button.Style>
-                                        <Style TargetType="Button">
-                                                <Setter Property="Background" Value="#4682B4"/>
-                                            <Setter Property="Foreground" Value="White"/>
-                                                <Setter Property="BorderBrush" Value="#87CEFA"/>
-                                            <Setter Property="BorderThickness" Value="2"/>
-                                            <Setter Property="Cursor" Value="Hand"/>
-                                            <Style.Triggers>
-                                                <Trigger Property="IsMouseOver" Value="True">
-                                                        <Setter Property="Background" Value="#87CEFA"/>
-                                                </Trigger>
-                                                <Trigger Property="IsPressed" Value="True">
-                                                        <Setter Property="Background" Value="#4682B4"/>
-                                                </Trigger>
-                                            </Style.Triggers>
+                        <!-- LEFT: Challenge Select Panel -->
+                        <Border Grid.Row="1" Grid.Column="0"
+                            Background="#222"
+                            Padding="16"
+                            Width="240"
+                            Height="400"
+                            Margin="0,0,16,0"
+                            BorderBrush="#FF4169E1"
+                            BorderThickness="3"
+                            CornerRadius="6">
+
+                            <Grid>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="*"/>
+                                </Grid.RowDefinitions>
+
+                                <TextBlock Grid.Row="0"
+                                   Text="Challenge Type"
+                                   FontSize="16"
+                                   Foreground="White"
+                                   HorizontalAlignment="Center"
+                                   Margin="0,0,0,12"/>
+
+                                <!-- Type buttons (single select) -->
+                                <StackPanel Grid.Row="1"
+                                    HorizontalAlignment="Center">
+
+                                    <StackPanel.Resources>
+                                        <!-- Bigger version for Type buttons only -->
+                                        <Style TargetType="Button"
+                                             BasedOn="{StaticResource ChallengeToggleButton}">
+
+                                            <Setter Property="Width" Value="120"/>
+                                            <Setter Property="Height" Value="32"/>
+                                            <Setter Property="FontSize" Value="13"/>
+                                            <Setter Property="Margin" Value="4"/>
                                         </Style>
-                                    </Button.Style>
-                                </Button>
+                                    </StackPanel.Resources>
+
+                                    <Button x:Name="BtnTypeSpeed"
+                                        Content="Speed"
+                                        Click="BtnTypeSpeed_Click"/>
+
+                                    <Button x:Name="BtnTypeAccuracy"
+                                        Content="Accuracy"
+                                        Click="BtnTypeAccuracy_Click"/>
+
+                                    <Button x:Name="BtnTypeTracking"
+                                        Content="Tracking"
+                                        Click="BtnTypeTracking_Click"/>
+
+                                </StackPanel>
+
+                                <TextBlock Grid.Row="2"
+                                   Text="Target Count"
+                                   FontSize="16"
+                                   Foreground="White"
+                                   HorizontalAlignment="Center"
+                                   Margin="0,16,0,10"/>
+
+                                <!-- Duration row + bottom actions -->
+                                <Grid Grid.Row="3" Margin="0,6,0,0">
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="Auto"/>
+                                        <!-- duration buttons -->
+                                        <RowDefinition Height="*"/>
+                                        <!-- spacer -->
+                                        <RowDefinition Height="Auto"/>
+                                        <!-- bottom actions -->
+                                    </Grid.RowDefinitions>
+
+                                    <!-- Duration row (single select) -->
+                                    <UniformGrid Grid.Row="0" Columns="3" HorizontalAlignment="Center">
+                                        <Button x:Name="BtnCount30"  Content="30"  Style="{StaticResource ChallengeToggleButton}" Click="BtnCount30_Click"/>
+                                        <Button x:Name="BtnCount60"  Content="60"  Style="{StaticResource ChallengeToggleButton}" Click="BtnCount60_Click"/>
+                                        <Button x:Name="BtnCount100" Content="100" Style="{StaticResource ChallengeToggleButton}" Click="BtnCount100_Click"/>
+                                    </UniformGrid>
+
+                                    <!-- Spacer -->
+                                    <Border Grid.Row="1"/>
+
+                                    <!-- Bottom action buttons -->
+                                    <StackPanel Grid.Row="2" HorizontalAlignment="Center" Margin="0,10,0,0">
+                                        <!-- PLAY -->
+                                        <Button x:Name="BtnPlayChallenge"
+                                            Content="▶"
+                                            Click="BtnPlayChallenge_Click"
+                                            FontSize="28"
+                                            FontWeight="Regular"
+                                            Opacity="0.9"
+                                            Padding="18,10"
+                                            HorizontalContentAlignment="Center"
+                                            VerticalContentAlignment="Center"
+                                            Margin="0,0,0,10">
+                                            <Button.Style>
+                                                <Style TargetType="Button" BasedOn="{StaticResource FancyButton}">
+                                                    <Setter Property="Background" Value="#00C853"/>
+                                                    <Setter Property="BorderBrush" Value="#69F0AE"/>
+                                                    <Setter Property="Foreground" Value="White"/>
+                                                    <Setter Property="Effect">
+                                                        <Setter.Value>
+                                                            <DropShadowEffect Color="#69F0AE" BlurRadius="18" ShadowDepth="0" Opacity="0.8"/>
+                                                        </Setter.Value>
+                                                    </Setter>
+                                                    <Style.Triggers>
+                                                        <Trigger Property="IsMouseOver" Value="True">
+                                                            <Setter Property="Background" Value="#00E676"/>
+                                                            <Setter Property="BorderBrush" Value="#B9F6CA"/>
+                                                            <Setter Property="Effect">
+                                                                <Setter.Value>
+                                                                    <DropShadowEffect Color="#00E676" BlurRadius="26" ShadowDepth="0" Opacity="1"/>
+                                                                </Setter.Value>
+                                                            </Setter>
+                                                        </Trigger>
+                                                        <Trigger Property="IsPressed" Value="True">
+                                                            <Setter Property="Background" Value="#00A843"/>
+                                                            <Setter Property="Effect">
+                                                                <Setter.Value>
+                                                                    <DropShadowEffect Color="#00A843" BlurRadius="10" ShadowDepth="0" Opacity="0.6"/>
+                                                                </Setter.Value>
+                                                            </Setter>
+                                                        </Trigger>
+                                                        <Trigger Property="IsEnabled" Value="False">
+                                                            <Setter Property="Background" Value="#2E7D32"/>
+                                                            <Setter Property="Foreground" Value="#88FFFFFF"/>
+                                                            <Setter Property="Effect">
+                                                                <Setter.Value>
+                                                                    <DropShadowEffect Opacity="0"/>
+                                                                </Setter.Value>
+                                                            </Setter>
+                                                        </Trigger>
+                                                    </Style.Triggers>
+                                                </Style>
+                                            </Button.Style>
+                                        </Button>
+
+                                        <!-- MAIN MENU -->
+                                        <Button x:Name="BtnMainMenuFromChallenge"
+                                            Content="Main Menu"
+                                            Width="120"
+                                            Height="34"
+                                            Click="BtnMainMenuFromPause_Click">
+                                            <Button.Style>
+                                                <Style TargetType="Button" BasedOn="{StaticResource FancyButton}">
+                                                    <Setter Property="Background" Value="#B00020"/>
+                                                    <Setter Property="BorderBrush" Value="#FF3B30"/>
+                                                    <Setter Property="Foreground" Value="White"/>
+                                                    <Style.Triggers>
+                                                        <Trigger Property="IsMouseOver" Value="True">
+                                                            <Setter Property="Background" Value="#FF3B30"/>
+                                                            <Setter Property="BorderBrush" Value="#FF6B5E"/>
+                                                        </Trigger>
+                                                        <Trigger Property="IsPressed" Value="True">
+                                                            <Setter Property="Background" Value="#8A0018"/>
+                                                        </Trigger>
+                                                    </Style.Triggers>
+                                                </Style>
+                                            </Button.Style>
+                                        </Button>
+                                    </StackPanel>
+                                </Grid>
+
+
+                                <!-- Spacer -->
+                                <Border Grid.Row="4"/>
+                            </Grid>
+                        </Border>
+
+                        <!-- RIGHT: Options + Actions (no stats panel) -->
+                        <Border Grid.Row="1" Grid.Column="1"
+                            Background="#333"
+                            Padding="16"
+                            Width="320"
+                            Height="400"
+                            BorderBrush="#FF4169E1"
+                            BorderThickness="3"
+                            CornerRadius="6">
+
+                            <Grid>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="*"/>
+                                    <RowDefinition Height="Auto"/>
+                                </Grid.RowDefinitions>
+
+                                <TextBlock Grid.Row="0"
+                                   Text="Options"
+                                   FontSize="18"
+                                   Foreground="White"
+                                   HorizontalAlignment="Center"
+                                   Margin="0,0,0,14"/>
+
+                                <!-- Color options (3 pale tones) -->
+                                <StackPanel Grid.Row="1" HorizontalAlignment="Center">
+                                    <TextBlock Text="Target Color Defaults:"
+                                       Foreground="White"
+                                       FontSize="12"
+                                       Opacity="0.85"
+                                       HorizontalAlignment="Center"
+                                       Margin="0,0,0,8"/>
+
+                                    <UniformGrid Columns="3" HorizontalAlignment="Center">
+                                        <Button x:Name="BtnColorRed"    Content="Red"    Style="{StaticResource ChallengeToggleButton}" Click="BtnColorRed_Click"/>
+                                        <Button x:Name="BtnColorYellow" Content="Yellow" Style="{StaticResource ChallengeToggleButton}" Click="BtnColorYellow_Click"/>
+                                        <Button x:Name="BtnColorGreen"  Content="Green"  Style="{StaticResource ChallengeToggleButton}" Click="BtnColorGreen_Click"/>
+                                    </UniformGrid>
+                                </StackPanel>
+
+                                <!-- Spacer -->
+                                <Border Grid.Row="2"/>
+
+                                <!-- Bottom actions -->
+                                <StackPanel Grid.Row="3" HorizontalAlignment="Center">
+
+                                    <Button x:Name="BtnCloseChallengeMenu"
+                                        Content="Close Menu [ESC]"
+                                        Width="240"
+                                        Height="34"
+                                        Margin="0,0,0,10"
+                                        Style="{StaticResource FancyButton}"
+                                        Click="BtnCloseChallengeMenu_Click"/>
+                                </StackPanel>
+                            </Grid>
+                        </Border>
+                    </Grid>
+                </Border>
+
+
+                <!-- GAME CANVAS -->
+                <Canvas Name="GameCanvas" Background="#FF2E2E2E"/>
+
+                <!-- CONTROL PANEL PLACEHOLDER (you can populate later) -->
+                <StackPanel Name="ControlPanel"
+                                Orientation="Vertical"
+                                VerticalAlignment="Top"
+                                HorizontalAlignment="Right"
+                                Margin="10"
+                                Background="#222"/>
+
+                <!-- ========================= -->
+                <!-- STARTUP OVERLAY -->
+                <!-- ========================= -->
+                <Border x:Name="StartupMessage"
+                            Background="#FF102A5C"
+                            BorderBrush="#FF4169E1"
+                            BorderThickness="3"
+                            CornerRadius="12"
+                            Padding="20"
+                            HorizontalAlignment="Center"
+                            VerticalAlignment="Center"
+                            Visibility="Visible"
+                            RenderTransformOrigin="0.5,0.5">
+
+                    <Border.RenderTransform>
+                        <TransformGroup>
+                            <ScaleTransform x:Name="StartupScale" ScaleX="1" ScaleY="1"/>
+                            <TranslateTransform x:Name="StartupTranslate" X="0" Y="0"/>
+                        </TransformGroup>
+                    </Border.RenderTransform>
+
+                    <Border.Effect>
+                        <DropShadowEffect Color="Black" BlurRadius="12" ShadowDepth="0" Opacity="0.6"/>
+                    </Border.Effect>
+
+                    <StackPanel x:Name="StartupMessageStack" HorizontalAlignment="Center" VerticalAlignment="Center">
+
+                        <!-- Time label (separate TextBlock; no illegal nesting) -->
+                        <TextBlock x:Name="ChallengeTimeTextBlock"
+                                       FontSize="16"
+                                       FontWeight="Bold"
+                                       Foreground="White"
+                                       Text="00:00:000"
+                                       TextAlignment="Center"
+                                       Visibility="Collapsed"
+                                       Margin="0,0,0,10"/>
+
+                        <TextBlock x:Name="StartupMessageText"
+                                       FontSize="24"
+                                       FontWeight="Bold"
+                                       Foreground="White"
+                                       TextAlignment="Center">
+
+                                <Run Text="Press "/>
+                                <InlineUIContainer BaselineAlignment="Center">
+                                    <Border Background="#222" BorderBrush="#FF63B8FF" BorderThickness="2" CornerRadius="4" Padding="6,2" Margin="4,0">
+                                        <TextBlock Text="SPACE" FontFamily="Consolas" FontSize="18" FontWeight="SemiBold" Foreground="White"/>
+                                    </Border>
+                                </InlineUIContainer>
+                                <Run Text=" to play"/>
+                                <LineBreak/>
+                                <Run Text="Press "/>
+                                <InlineUIContainer BaselineAlignment="Center">
+                                    <Border Background="#222" BorderBrush="#FF63B8FF" BorderThickness="2" CornerRadius="4" Padding="6,2" Margin="4,0">
+                                        <TextBlock Text="ESC" FontFamily="Consolas" FontSize="18" FontWeight="SemiBold" Foreground="White"/>
+                                    </Border>
+                                </InlineUIContainer>
+                                <Run Text=" to pause"/>
+
+                            </TextBlock>
+
+                        <!-- Challenge Complete elements (hidden initially) -->
+                        <TextBlock x:Name="StartupMessageTitle" FontSize="28" FontWeight="Bold" Foreground="White" TextAlignment="Center" Margin="0,10,0,5" Visibility="Collapsed"/>
+                        <TextBlock x:Name="StartupMessageStats" FontSize="20" Foreground="White" TextAlignment="Center" Visibility="Collapsed"/>
+                        <TextBlock x:Name="StartupMessageHint" FontSize="16" Foreground="LightGray" TextAlignment="Center" Margin="0,10,0,0" Visibility="Collapsed"/>
+                    </StackPanel>
+                </Border>
+
+                <!-- ========================= -->
+                <!-- PAUSE OVERLAY -->
+                <!-- ========================= -->
+                <Border x:Name="PauseOverlayBorder"
+                            Background="#FF102A5C"
+                            BorderBrush="#FF4169E1"
+                            BorderThickness="4"
+                            CornerRadius="12"
+                            Padding="12"
+                            HorizontalAlignment="Center"
+                            VerticalAlignment="Center"
+                            Visibility="Collapsed">
+
+                    <StackPanel x:Name="PauseOverlayStack" Orientation="Vertical" HorizontalAlignment="Center">
+
+                        <Grid x:Name="PauseMainGrid" Background="#FF102A5C" HorizontalAlignment="Center">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="*"/>
+                            </Grid.RowDefinitions>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="Auto"/>
+                            </Grid.ColumnDefinitions>
+
+                            <!-- Title + ESC Hint -->
+                            <StackPanel Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="3" HorizontalAlignment="Center" VerticalAlignment="Top" Margin="0,4">
+                                <TextBlock Text="BluesAimTrain" FontFamily="Segoe UI Black" FontSize="18" FontWeight="Bold" Foreground="White" HorizontalAlignment="Center">
+                                    <TextBlock.Effect>
+                                        <DropShadowEffect Color="Black" BlurRadius="3" ShadowDepth="0" Opacity="1"/>
+                                    </TextBlock.Effect>
+                                </TextBlock>
+
+                                <TextBlock Text="Press ESC to close" Foreground="#AAAAAA" FontSize="10" Opacity="0.5" HorizontalAlignment="Center" Margin="0,2,0,0"/>
                             </StackPanel>
-                        </StackPanel>
-                    </Border>
 
-                    <!-- MIDDLE: Pause Menu -->
-                    <Border Grid.Row="1" Grid.Column="1" Background="#333" Padding="20" Width="300" Height="400" Margin="0,0,20,0"  BorderBrush="#FF4169E1" BorderThickness="3" CornerRadius="6">
-                        <StackPanel VerticalAlignment="Top">
-                            <TextBlock Text="Pause Menu" FontSize="18" Foreground="White" HorizontalAlignment="Center" Margin="0,0,0,20"/>
-                                <StackPanel Orientation="Horizontal" Margin="0,0,0,10" VerticalAlignment="Center">
-                                    <Button Name="RandomColorButton" Content="Rng Color" Width="210" Height="28" FontSize="11" Style="{StaticResource FancyButton}" Click="RandomColorButton_Click"/>
+                            <!-- LEFT: Presets Panel -->
+                            <Border Grid.Row="1" Grid.Column="0"
+                                        Background="#222"
+                                        Padding="20"
+                                        Width="200"
+                                        Height="400"
+                                        Margin="0,0,20,0"
+                                        BorderBrush="#FF4169E1"
+                                        BorderThickness="3"
+                                        CornerRadius="6">
+                                <Grid>
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="Auto"/>
+                                        <RowDefinition Height="*"/>
+                                    </Grid.RowDefinitions>
 
-                                    <!-- Current Color Preview -->
-                                    <Border Name="CurrentColorPreview" Width="28" Height="28" Margin="8,0,0,0" BorderBrush="#FF4169E1" BorderThickness="2" CornerRadius="4" Background="White"/>
-                                </StackPanel>
+                                    <!-- Top content -->
+                                    <StackPanel Grid.Row="0" VerticalAlignment="Top">
+                                        <TextBlock Text="Presets"
+                                           FontSize="18"
+                                           Foreground="White"
+                                           HorizontalAlignment="Center"
+                                           Margin="0,0,0,20"/>
 
-                                <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Margin="0,0,0,10">
-                                    <Button Name="ToggleColorPickerButton" Content="Color Select" Width="210" Height="28" Click="ToggleColorPickerButton_Click" Style="{StaticResource FancyButton}"/>
-                                    <!-- Current Color Preview -->
-                                    <Border Name="CurrentColorPreview2" Width="28" Height="28" Margin="8,0,0,0" BorderBrush="#FF4169E1" BorderThickness="2" CornerRadius="4" Background="White"/>
-                                </StackPanel>
-
-                                <!-- Manual Inputs -->
-                                <StackPanel Margin="0,6,0,0">
-
-                                    <StackPanel Orientation="Horizontal" Margin="0,6,0,0">
-                                        <TextBlock Text="Target Size (px)" Foreground="White" FontSize="11" Width="140"/>
-                                        <TextBox x:Name="SizeTextBox" Width="90" Height="24" Text="50" FontSize="11" Padding="6,2" Foreground="White" Background="#222" BorderBrush="#FF4169E1" BorderThickness="1" VerticalContentAlignment="Center" PreviewTextInput="NumericOnly_PreviewTextInput"/>
+                                        <Button Content="Default" Name="PresetDefault" Margin="0,5" Width="122" Height="28" Style="{StaticResource FancyButton}"/>
+                                        <Button Content="Beginner" Name="PresetBeginner" Margin="0,5" Width="122" Height="28" Style="{StaticResource FancyButton}"/>
+                                        <Button Content="Casual" Name="PresetCasual" Margin="0,5" Width="122" Height="28" Style="{StaticResource FancyButton}"/>
+                                        <Button Content="Pro" Name="PresetPro" Margin="0,5" Width="122" Height="28" Style="{StaticResource FancyButton}"/>
                                     </StackPanel>
 
-                                    <StackPanel Orientation="Horizontal" Margin="0,8,0,0">
-                                        <TextBlock Text="Spawn Delay (ms)" Foreground="White" FontSize="11" Width="140"/>
-                                        <TextBox x:Name="DelayTextBox" Width="90" Height="24" Text="800" FontSize="11" Padding="6,2" Foreground="White" Background="#222" BorderBrush="#FF4169E1" BorderThickness="1" VerticalContentAlignment="Center" PreviewTextInput="NumericOnly_PreviewTextInput"/>
+                                    <!-- Bottom-justified button -->
+
+                                    <!-- Bottom-justified buttons -->
+                                    <StackPanel Grid.Row="1"
+                                        VerticalAlignment="Bottom"
+                                        HorizontalAlignment="Center"
+                                        Margin="0,0,0,6">
+
+                                        <Button x:Name="BtnPlayFreerun"
+                                            Content="  ▶ "
+                                            Click="BtnPlayFreerun_Click"
+                                            FontSize="28"
+                                            FontWeight="Regular"
+                                            Opacity="0.85"
+                                            Foreground="White"
+
+                                            Background="#FF0FA262"
+                                            BorderBrush="#FF076023"
+                                            BorderThickness="2"
+
+                                            Padding="18,12"
+                                            HorizontalContentAlignment="Center"
+                                            VerticalContentAlignment="Center"
+
+                                            Width="Auto"
+                                            Height="Auto"
+                                            Margin="0,0,0,40">
+
+                                            <Button.Style>
+                                                <Style TargetType="Button" BasedOn="{StaticResource FancyButton}">
+
+                                                    <!-- Base: Neon green -->
+                                                    <Setter Property="Background" Value="#00C853"/>
+                                                    <Setter Property="BorderBrush" Value="#69F0AE"/>
+                                                    <Setter Property="Foreground" Value="Black"/>
+
+                                                    <!-- Glow -->
+                                                    <Setter Property="Effect">
+                                                        <Setter.Value>
+                                                            <DropShadowEffect
+                                                                Color="#69F0AE"
+                                                                BlurRadius="18"
+                                                                ShadowDepth="0"
+                                                                Opacity="0.8"/>
+                                                        </Setter.Value>
+                                                    </Setter>
+
+                                                    <Style.Triggers>
+
+                                                        <!-- Hover: brighter + stronger glow -->
+                                                        <Trigger Property="IsMouseOver" Value="True">
+                                                            <Setter Property="Background" Value="#00E676"/>
+                                                            <Setter Property="BorderBrush" Value="#B9F6CA"/>
+                                                            <Setter Property="Effect">
+                                                                <Setter.Value>
+                                                                    <DropShadowEffect
+                                                                        Color="#00E676"
+                                                                        BlurRadius="26"
+                                                                        ShadowDepth="0"
+                                                                        Opacity="1"/>
+                                                                </Setter.Value>
+                                                            </Setter>
+                                                        </Trigger>
+
+                                                        <!-- Pressed: darker + reduced glow -->
+                                                        <Trigger Property="IsPressed" Value="True">
+                                                            <Setter Property="Background" Value="#00A843"/>
+                                                            <Setter Property="Effect">
+                                                                <Setter.Value>
+                                                                    <DropShadowEffect
+                                                                        Color="#00A843"
+                                                                        BlurRadius="10"
+                                                                        ShadowDepth="0"
+                                                                        Opacity="0.6"/>
+                                                                </Setter.Value>
+                                                            </Setter>
+                                                        </Trigger>
+
+                                                        <!-- Disabled -->
+                                                        <Trigger Property="IsEnabled" Value="False">
+                                                            <Setter Property="Background" Value="#2E7D32"/>
+                                                            <Setter Property="Foreground" Value="#88FFFFFF"/>
+                                                            <Setter Property="Effect">
+                                                                <Setter.Value>
+                                                                    <DropShadowEffect Opacity="0"/>
+                                                                </Setter.Value>
+                                                            </Setter>
+                                                        </Trigger>
+
+                                                    </Style.Triggers>
+                                                </Style>
+                                            </Button.Style>
+                                        </Button>
+
+                                        <!-- MAIN MENU (danger) -->
+                                        <Button x:Name="BtnMainMenuFromPause"
+                                            Content="Main Menu"
+                                            Width="122"
+                                            Height="34"
+                                            Click="BtnMainMenuFromPause_Click">
+
+                                            <Button.Style>
+                                                <Style TargetType="Button" BasedOn="{StaticResource FancyButton}">
+                                                    <Setter Property="Background" Value="#B00020"/>
+                                                    <Setter Property="BorderBrush" Value="#FF3B30"/>
+                                                    <Setter Property="Foreground" Value="White"/>
+
+                                                    <Style.Triggers>
+                                                        <Trigger Property="IsMouseOver" Value="True">
+                                                            <Setter Property="Background" Value="#FF3B30"/>
+                                                            <Setter Property="BorderBrush" Value="#FF6B5E"/>
+                                                        </Trigger>
+
+                                                        <Trigger Property="IsPressed" Value="True">
+                                                            <Setter Property="Background" Value="#8A0018"/>
+                                                        </Trigger>
+                                                    </Style.Triggers>
+                                                </Style>
+                                            </Button.Style>
+
+                                        </Button>
+
                                     </StackPanel>
 
-                                    <StackPanel Orientation="Horizontal" Margin="0,8,0,0">
-                                        <TextBlock Text="Target Lifetime (ms)" Foreground="White" FontSize="11" Width="140"/>
-                                        <TextBox x:Name="LifetimeTextBox" Width="90" Height="24" Text="1000" FontSize="11" Padding="6,2" Foreground="White" Background="#222" BorderBrush="#FF4169E1" BorderThickness="1" VerticalContentAlignment="Center" PreviewTextInput="NumericOnly_PreviewTextInput"/>
-                                    </StackPanel>
-
-                                    <Button x:Name="ApplySettingsButton" Content="Set" Width="240" Height="28" FontSize="11" Style="{StaticResource FancyButton}" Margin="0,10,0,0" Click="ApplySettingsButton_Click"/>
-
-                                </StackPanel>
-
-                                <CheckBox x:Name="CenterToggleButton" Content="Target Center" IsChecked="True" FontSize="11" Foreground="White" VerticalAlignment="Center"/>
-                            </StackPanel>
-                    </Border>
-
-
-                        <!-- RIGHT: Previous Stats Panel -->
-                    <Border x:Name="PreviousStatsGrid" Grid.Row="1" Grid.Column="2" Width="200" Height="400" Background="#222" Padding="20" BorderBrush="#FF4169E1" BorderThickness="3" CornerRadius="6">
-                        <StackPanel VerticalAlignment="Top">
-                            <!-- Header + Reset Button -->
-                            <DockPanel Margin="0,0,0,20" LastChildFill="False">
-                                <TextBlock Text="Previous Stats" FontSize="18" Foreground="White" VerticalAlignment="Center" DockPanel.Dock="Left"/>
-                                <Border CornerRadius="4" Background="#FF4169E1" BorderBrush="#FF63B8FF" BorderThickness="1" HorizontalAlignment="Right" DockPanel.Dock="Right">
-                                    <Button x:Name="ResetButtonPrevStats" Content="⟳" Width="28" Height="20" ToolTip="Reset Stats" Click="ResetButton_Click" Cursor="Hand" FontWeight="Bold" Foreground="White" Background="Transparent" BorderThickness="0">
-                                        <Button.Effect>
-                                            <DropShadowEffect Color="Black" BlurRadius="4" ShadowDepth="1" Opacity="0.3"/>
-                                        </Button.Effect>
-                                    </Button>
-                                </Border>
-                            </DockPanel>
-
-                            <!-- Stats -->
-                            <TextBlock x:Name="PrevScoreTextBlock" Text="Score: 0" Foreground="White" FontSize="11" Margin="0,0,0,5"/>
-                            <TextBlock x:Name="PrevAccuracyTextBlock" Text="Accuracy: 0%" Foreground="White" FontSize="11" Margin="0,0,0,5"/>
-                            <TextBlock x:Name="PrevTargetSettingsTextBlock" Text="Settings: Default" Foreground="White" FontSize="11" Margin="0,0,0,10"/>
-
-                            <!-- Circular Heatmap at Bottom -->
-                            <Border Width="147" Height="147" Background="#111" BorderBrush="#555" BorderThickness="1" CornerRadius="73" HorizontalAlignment="Center" VerticalAlignment="Bottom" ClipToBounds="True" Margin="0,10,0,0">
-                                <Canvas x:Name="HeatmapCanvas" Width="117" Height="117" IsHitTestVisible="False"/>
+                                </Grid>
                             </Border>
-                        </StackPanel>
-                    </Border>
 
-                </Grid>
-                    <Border x:Name="ColorPickerPanel"
-                        Background="#222"
-                        BorderBrush="#FF4169E1"
-                        BorderThickness="3"
-                        CornerRadius="6"
-                        Padding="10"
-                        Margin="0,10,0,0"
-                        Visibility="Collapsed"
-                        HorizontalAlignment="Stretch">
-                        
-                        <ScrollViewer VerticalScrollBarVisibility="Auto"
-                            HorizontalScrollBarVisibility="Disabled">
-                            <UniformGrid x:Name="ColorBoxesPanel"
-                                Columns="40"
-                                Width="Auto"
-                                UseLayoutRounding="True"
-                                SnapsToDevicePixels="True"
-                                HorizontalAlignment="Stretch"/>
-                        </ScrollViewer>
-                    </Border>
-                </StackPanel>
-            </Border>
+                            <!-- MIDDLE: Pause Menu -->
+                            <Border Grid.Row="1" Grid.Column="1"
+                                Background="#333"
+                                Padding="20"
+                                Width="300"
+                                Height="400"
+                                Margin="0,0,20,0"
+                                BorderBrush="#FF4169E1"
+                                BorderThickness="3"
+                                CornerRadius="6">
+
+                                <Grid>
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="Auto"/>
+                                        <!-- Title -->
+                                        <RowDefinition Height="Auto"/>
+                                        <!-- Color rows -->
+                                        <RowDefinition Height="Auto"/>
+                                        <!-- Color select -->
+                                        <RowDefinition Height="Auto"/>
+                                        <!-- Inputs -->
+                                        <RowDefinition Height="*"/>
+                                        <!-- Spacer -->
+                                        <RowDefinition Height="Auto"/>
+                                        <!-- Bottom buttons -->
+                                    </Grid.RowDefinitions>
+
+                                    <!-- Title -->
+                                    <TextBlock Grid.Row="0"
+                                       Text="Pause Menu"
+                                       FontSize="18"
+                                       Foreground="White"
+                                       HorizontalAlignment="Center"
+                                       Margin="0,0,0,20"/>
+
+                                    <!-- Rng Color + preview -->
+                                    <StackPanel Grid.Row="1" Orientation="Horizontal" Margin="0,0,0,10" VerticalAlignment="Center">
+                                        <Button Name="RandomColorButton"
+                                            Content="Rng Color"
+                                            Width="210"
+                                            Height="28"
+                                            FontSize="11"
+                                            Style="{StaticResource FancyButton}"
+                                            Click="RandomColorButton_Click"/>
+                                        <Border Name="CurrentColorPreview"
+                                            Width="28"
+                                            Height="28"
+                                            Margin="8,0,0,0"
+                                            BorderBrush="#FF4169E1"
+                                            BorderThickness="2"
+                                            CornerRadius="4"
+                                            Background="White"/>
+                                    </StackPanel>
+
+                                    <!-- Color Select + preview -->
+                                    <StackPanel Grid.Row="2" Orientation="Horizontal" VerticalAlignment="Center" Margin="0,0,0,10">
+                                        <Button Name="ToggleColorPickerButton"
+                                            Content="Color Select"
+                                            Width="210"
+                                            Height="28"
+                                            Click="ToggleColorPickerButton_Click"
+                                            Style="{StaticResource FancyButton}"/>
+                                        <Border Name="CurrentColorPreview2"
+                                            Width="28"
+                                            Height="28"
+                                            Margin="8,0,0,0"
+                                            BorderBrush="#FF4169E1"
+                                            BorderThickness="2"
+                                            CornerRadius="4"
+                                            Background="White"/>
+                                    </StackPanel>
+
+                                    <!-- Inputs -->
+                                    <StackPanel Grid.Row="3" Margin="0,6,0,0">
+
+                                        <CheckBox x:Name="CenterToggleButton"
+                                          Content="Target Center"
+                                          IsChecked="True"
+                                          FontSize="11"
+                                          Foreground="White"
+                                          VerticalAlignment="Center"/>
+
+                                        <StackPanel Orientation="Horizontal" Margin="0,6,0,0">
+                                            <TextBlock Text="Target Size (px)" Foreground="White" FontSize="11" Width="140"/>
+                                            <TextBox x:Name="SizeTextBox"
+                                                 Width="90"
+                                                 Height="24"
+                                                 Text="50"
+                                                 FontSize="11"
+                                                 Padding="6,2"
+                                                 Foreground="White"
+                                                 Background="#222"
+                                                 BorderBrush="#FF4169E1"
+                                                 BorderThickness="1"
+                                                 VerticalContentAlignment="Center"
+                                                 PreviewTextInput="NumericOnly_PreviewTextInput"/>
+                                        </StackPanel>
+
+                                        <StackPanel Orientation="Horizontal" Margin="0,8,0,0">
+                                            <TextBlock Text="Spawn Delay (ms)" Foreground="White" FontSize="11" Width="140"/>
+                                            <TextBox x:Name="DelayTextBox"
+                                                 Width="90"
+                                                 Height="24"
+                                                 Text="800"
+                                                 FontSize="11"
+                                                 Padding="6,2"
+                                                 Foreground="White"
+                                                 Background="#222"
+                                                 BorderBrush="#FF4169E1"
+                                                 BorderThickness="1"
+                                                 VerticalContentAlignment="Center"
+                                                 PreviewTextInput="NumericOnly_PreviewTextInput"/>
+                                        </StackPanel>
+
+                                        <StackPanel Orientation="Horizontal" Margin="0,8,0,0">
+                                            <TextBlock Text="Target Lifetime (ms)" Foreground="White" FontSize="11" Width="140"/>
+                                            <TextBox x:Name="LifetimeTextBox"
+                                                 Width="90"
+                                                 Height="24"
+                                                 Text="1000"
+                                                 FontSize="11"
+                                                 Padding="6,2"
+                                                 Foreground="White"
+                                                 Background="#222"
+                                                 BorderBrush="#FF4169E1"
+                                                 BorderThickness="1"
+                                                 VerticalContentAlignment="Center"
+                                                 PreviewTextInput="NumericOnly_PreviewTextInput"/>
+                                        </StackPanel>
+
+                                        <Button x:Name="ApplySettingsButton"
+                                            Content="Apply Settings"
+                                            Width="120"
+                                            Height="28"
+                                            FontSize="11"
+                                            Style="{StaticResource FancyButton}"
+                                            Margin="0,10,0,0"
+                                            Click="ApplySettingsButton_Click"/>
+                                    </StackPanel>
+
+                                    <!-- Bottom action buttons (true bottom) -->
+                                    <StackPanel Grid.Row="5" HorizontalAlignment="Center" Margin="0,14,0,0">
+                                        <Button x:Name="BtnClosePauseMenu"
+                                            Content="Close PauseMenu [ESC]"
+                                            Width="200"
+                                            Height="34"
+                                            Margin="0,0,0,8"
+                                            FontSize="14"
+                                            FontWeight="SemiBold"
+                                            Click="BtnClosePauseMenu_Click">
+
+                                            <Button.Style>
+                                                <Style TargetType="Button" BasedOn="{StaticResource FancyButton}">
+
+                                                    <!-- Base: calm dark navy -->
+                                                    <Setter Property="Background" Value="#1F2E3D"/>
+                                                    <Setter Property="BorderBrush" Value="#4A6FA5"/>
+                                                    <Setter Property="Foreground" Value="#EAF6FF"/>
+
+                                                    <Style.Triggers>
+
+                                                        <!-- Hover: slightly brighter -->
+                                                        <Trigger Property="IsMouseOver" Value="True">
+                                                            <Setter Property="Background" Value="#2A3F55"/>
+                                                            <Setter Property="BorderBrush" Value="#63B8FF"/>
+                                                        </Trigger>
+
+                                                        <!-- Press: darker -->
+                                                        <Trigger Property="IsPressed" Value="True">
+                                                            <Setter Property="Background" Value="#18232F"/>
+                                                        </Trigger>
+
+                                                        <!-- Disabled -->
+                                                        <Trigger Property="IsEnabled" Value="False">
+                                                            <Setter Property="Opacity" Value="0.4"/>
+                                                        </Trigger>
+
+                                                    </Style.Triggers>
+                                                </Style>
+                                            </Button.Style>
+                                        </Button>
+
+                                    </StackPanel>
+
+                                </Grid>
+                            </Border>
+
+
+                            <!-- RIGHT: Previous Stats Panel -->
+                            <Border x:Name="PreviousStatsGrid"
+                                        Grid.Row="1"
+                                        Grid.Column="2"
+                                        Width="200"
+                                        Height="400"
+                                        Background="#222"
+                                        Padding="20"
+                                        BorderBrush="#FF4169E1"
+                                        BorderThickness="3"
+                                        CornerRadius="6">
+                                <StackPanel VerticalAlignment="Top">
+
+                                    <DockPanel Margin="0,0,0,20" LastChildFill="False">
+                                        <TextBlock Text="Previous Stats" FontSize="18" Foreground="White" VerticalAlignment="Center" DockPanel.Dock="Left"/>
+                                        <Border CornerRadius="4" Background="#FF4169E1" BorderBrush="#FF63B8FF" BorderThickness="1" HorizontalAlignment="Right" DockPanel.Dock="Right">
+                                            <Button x:Name="ResetButton"
+                                                        Content="⟳"
+                                                        Width="28"
+                                                        Height="20"
+                                                        ToolTip="Reset Stats"
+                                                        Click="ResetButton_Click"
+                                                        Cursor="Hand"
+                                                        FontWeight="Bold"
+                                                        Foreground="White"
+                                                        Background="Transparent"
+                                                        BorderThickness="0">
+                                                <Button.Effect>
+                                                    <DropShadowEffect Color="Black" BlurRadius="4" ShadowDepth="1" Opacity="0.3"/>
+                                                </Button.Effect>
+                                            </Button>
+                                        </Border>
+                                    </DockPanel>
+
+                                    <TextBlock x:Name="PrevScoreTextBlock" Text="Score: 0" Foreground="White" FontSize="11" Margin="0,0,0,5"/>
+                                    <TextBlock x:Name="PrevAccuracyTextBlock" Text="Accuracy: 0%" Foreground="White" FontSize="11" Margin="0,0,0,5" Visibility="Visible"/>
+                                    <TextBlock x:Name="PrevTargetSettingsTextBlock" Text="Settings: Default" Foreground="White" FontSize="11" Margin="0,0,0,10" Visibility="Visible"/>
+
+
+                                    <Border Width="147" Height="147" Background="#111" BorderBrush="#555" BorderThickness="1"
+                                                CornerRadius="73" HorizontalAlignment="Center" VerticalAlignment="Bottom"
+                                                ClipToBounds="True" Margin="0,10,0,0">
+                                        <Canvas x:Name="HeatmapCanvas" Width="117" Height="117" IsHitTestVisible="False"/>
+                                    </Border>
+                                </StackPanel>
+                            </Border>
+
+                        </Grid>
+
+                        <!-- COLOR PICKER PANEL -->
+                        <Border x:Name="ColorPickerPanel"
+                                    Background="#222"
+                                    BorderBrush="#FF4169E1"
+                                    BorderThickness="3"
+                                    CornerRadius="6"
+                                    Padding="10"
+                                    Margin="0,10,0,0"
+                                    Visibility="Collapsed"
+                                    HorizontalAlignment="Stretch">
+                            <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+                                <UniformGrid x:Name="ColorBoxesPanel"
+                                                 Columns="40"
+                                                 Width="Auto"
+                                                 UseLayoutRounding="True"
+                                                 SnapsToDevicePixels="True"
+                                                 HorizontalAlignment="Stretch"/>
+                            </ScrollViewer>
+                        </Border>
+
+                    </StackPanel>
+                </Border>
+
+            </Grid>
+
         </Grid>
     </Grid>
 </Window>
