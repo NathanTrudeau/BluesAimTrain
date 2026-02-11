@@ -498,9 +498,9 @@ namespace BluesAimTrain
             Loaded += (_, __) => InitProfileCoinSync();
             UpdateCoinsUI();
 
-#if !DEBUG
-            BtnDev4.Visibility = Visibility.Collapsed;
-#endif
+//#if !DEBUG
+//            BtnDev4.Visibility = Visibility.Collapsed;
+//#endif
 
             // Data
             ChallengeHistoryList.ItemsSource = _challengeRuns;
@@ -2833,6 +2833,7 @@ namespace BluesAimTrain
         {
             _profileSync = ProfileSync.CreateDefault(AppBootstrap.ProfileDirOverride);
             AppBootstrap.Log($"ProfilePath used: {_profileSync.ProfilePath}");
+            AppBootstrap.Log(typeof(ProfileSync).Assembly.Location);
 
             // Initial read (ensures profile exists too)
             _coinsCached = _profileSync.ReadCoinsLocked();

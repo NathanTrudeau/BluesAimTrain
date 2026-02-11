@@ -12,6 +12,8 @@ namespace BluesShared
     {
         public string PlayerName { get; set; } = "b1uepack";
 
+        public string PlayerNameColorHex { get; set; } = "#FF483DFF";
+        public long LifetimeAimCoinsEarned { get; set; } = 0;
         public long Coins { get; set; } = 0;
         public long LifetimeEarned { get; set; } = 0;
         public long LifetimeSpent { get; set; } = 0;
@@ -26,10 +28,13 @@ namespace BluesShared
 
         public long NetWorth => LifetimeEarned;
 
+        public int LastSeenTotalLevel { get; set; }
+        public int PendingLevelUps { get; set; }
+
+
         public DateTime CreatedUtc { get; set; } = DateTime.UtcNow;
         public DateTime UpdatedUtc { get; set; } = DateTime.UtcNow;
-        public List<ChallengeRunEntry> ChallengeHistory { get; set; } = new();
-        public int SchemaVersion { get; set; } = 2;
+        public int SchemaVersion { get; set; } = 1;
 
     }
 
@@ -133,6 +138,7 @@ namespace BluesShared
                 var p = LoadOrCreateLocked_NoLock();
                 p.Coins += amount;
                 p.LifetimeEarned += amount;
+                p.LifetimeAimCoinsEarned += amount;
                 p.UpdatedUtc = DateTime.UtcNow;
 
                 SaveInternalLocked_NoLock(p);
